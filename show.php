@@ -1,8 +1,9 @@
+
 <?php include('header.php') ?>
     <div class="col-lg-8 p-0">
         <div class="card">
-            <div class="card-header text-danger p-3">
-                Supprimer votre répondeur
+            <div class="card-header text-info p-3">
+                Visualiser votre répondeur
             </div>
             <div class="card-body p-3">
                 <form action="/" method="POST">

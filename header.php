@@ -1,3 +1,6 @@
+<?php 
+    $domain = 'ladefoule.fr';
+?>
 <!doctype html>
 <html lang="fr">
   <head>
@@ -36,6 +39,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="/create.php">Créer</a>
+                    <a class="dropdown-item" href="/show.php">Visualiser</a>
                     <a class="dropdown-item" href="/update.php">Modifier</a>
                     <a class="dropdown-item" href="/delete.php">Supprimer</a>
                 </div>

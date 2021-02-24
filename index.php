@@ -8,10 +8,6 @@
     use \Carbon\Carbon;
     
     // Informations about your application
-    $applicationKey = "h4Owvc27Jb7kLzsM";
-    $applicationSecret = "y150Fujxx6gQYq7G5UnMYo2Lue0M8ynV";
-    $consumer_key = "zBcglspW9E54y9y0fEPGgMOY0tGwYy47";
-
     $applicationKey = "0xllQDAz0TkXJPcO";
     $applicationSecret = "mUMMiP2AkrFUNC3WuMYS3nfoxIWDJiyh";
     $consumer_key = "OnRl5zLELRHEJ8wxpKOA2Cts0GuGklRa";
@@ -37,61 +33,115 @@
         $client
     );
 
+    $messageError = "Une erreur s'est produite, merci de rééssayer. ";
+    $classError = 'danger';
+
     $method = $_SERVER['REQUEST_METHOD'];
+    
+    if($method == "POST"){
+        $action = $_POST['method'] ?? '';
+        // ON VERIFIE ICI L'USER ET ON LE REDIRIGE VERS LE FORM SIYABESOIN
+        // SI l'auth echous alors on sort
 
-    switch ($method) {
-        case 'POST':
-            $account = $_POST['email'];
-            // $password = $_POST['password'];
-            $emailCopy = $_POST['email-copie'];
-            $copy = isset($_POST['copie']) ? true : false;
-            $content = $_POST['message'];
-            $fromDate = new Carbon($_POST['debut']);
-            $toDate = new Carbon($_POST['fin']);
+        switch ($action) {
+            case 'POST':
+                $account = $_POST['email'];
+                // $password = $_POST['password'];
+                $emailCopy = $_POST['email-copie'];
+                $copy = isset($_POST['copie']) ? true : false;
+                $content = $_POST['message'];
+                $fromDate = new Carbon($_POST['debut']);
+                $toDate = new Carbon($_POST['fin']);
 
-            // $email = $account .'@'. $domain;
-            // if (!canLoginEmailAccount($imapServer, $email, $password)){
-            //     $class = 'danger';
-            //     $message = "Impossible de vous connecter, veuillez rééssayer.";
-            //     break;            
-            // }
+                // $email = $account .'@'. $domain;
+                // if (!canLoginEmailAccount($imapServer, $email, $password)){
+                //     $class = 'danger';
+                //     $message = "Impossible de vous connecter, veuillez rééssayer.";
+                //     break;            
+                // }
 
-            try {    
-                $result = $conn->post("/email/domain/$domain/responder", array(
-                    'account' => $account, // Account of domain (type: string)
-                    'content' => $content, // Content of responder (type: string)
-                    'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
-                    'copyTo' => $emailCopy, // Account where copy emails (type: string)
-                    'from' => $fromDate, // Date of start responder (type: datetime)
-                    'to' => $toDate, // Date of end responder (type: datetime)
-                ));
-        
-                $class = 'success';
-                $message = "Répondeur créé avec succès !";
-            } catch (Exception $e) {
-                // $response = $e->getResponse();
-                // $responseBodyAsString = $response->getBody()->getContents();
-                // echo $responseBodyAsString;
-                
-                $class = 'danger';
-                $message = "Une erreur s'est produite, merci de rééssayer.";
-            }
-            break;
-        
-        default:
-            # code...
-            break;
-    }
+                try {    
+                    $result = $conn->post("/email/domain/$domain/responder", array(
+                        'account' => $account, // Account of domain (type: string)
+                        'content' => $content, // Content of responder (type: string)
+                        'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
+                        'copyTo' => $emailCopy, // Account where copy emails (type: string)
+                        'from' => $fromDate, // Date of start responder (type: datetime)
+                        'to' => $toDate, // Date of end responder (type: datetime)
+                    ));
+            
+                    $class = 'success';
+                    $message = "Répondeur créé avec succès !";
+                } catch (Exception $e) {
+                    // $response = $e->getResponse();
+                    // $responseBodyAsString = $response->getBody()->getContents();
+                    // echo $responseBodyAsString;
+                    
+                    $class = $classError;
+                    $message = $messageError;
+                }
+                break;
 
-    // Personnalisation du message
-    if(isset($message)){
-        ?>
-            <div class="alert alert-<?php echo $class ?> alert-block">    
-                <button type="button" class="close" data-dismiss="alert">×</button>    
-                <strong><?php echo $message ?></strong>
+            case 'GET':
+
+                break;
+
+            case 'DELETE':
+                $account = $_POST['email'];
+                try {  
+                    $result = $conn->delete("/email/domain/$domain/responder/$account");
+                    $class = 'success';
+                    $message = "Répondeur supprimé avec succès !";
+                } catch (Exception $e) {
+                    // $response = $e->getResponse();
+                    // $responseBodyAsString = $response->getBody()->getContents();
+                    // echo $responseBodyAsString;
+                    
+                    $class = $classError;
+                    $message = $messageError;
+                }
+                break;
+            
+            default:
+                // include('verif-account.php');
+                break;
+        }
+
+        // Personnalisation du message
+        if(isset($message)){
+            ?>
+                <div class="alert alert-<?php echo $class ?> alert-block">    
+                    <button type="button" class="close" data-dismiss="alert">×</button>    
+                    <strong><?php echo $message ?></strong>
+                </div>
+            <?php 
+        }
+    }else{
+?>
+
+    <div class="col-lg-8 p-0">
+        <div class="card">
+            <div class="card-header p-3">
+                Gestion de votre répondeur
             </div>
-        <?php 
-    }
+            <div class="card-body p-3">
+                <form action="/" method="POST">
+                    <div class="form-row pb-3">
+                        <label for="email" class="col-12">Email <span class="text-danger">*</span></label>
+                        <input type="text" required class="form-control col-8" id="email" name="email"><span class="col-4">@<?php echo $domain ?>r</span>
+                    </div>
 
-    include('footer.php') 
+                    <button type="submit" class="btn btn-primary px-4" name="action" value="POST">Créer</button>
+                    <button type="submit" class="btn btn-info px-4" name="action" value="GET">Voir</button>
+                    <button type="submit" class="btn btn-warning px-4" name="action" value="PUT">Modifier</button>
+                    <button type="submit" class="btn btn-danger px-4" name="action" value="DELETE">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<?php 
+    }
+include('footer.php');
+
 ?>
