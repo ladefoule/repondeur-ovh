@@ -1,7 +1,8 @@
-<?php include('header.php') ?>
+<?php 
+    include('header.php');
 
-<?php
     require __DIR__ . '/vendor/autoload.php';
+    require('fonctions.php');
     use \Ovh\Api;
     use \GuzzleHttp\Client;
     use \Carbon\Carbon;
@@ -19,6 +20,7 @@
     $endpoint = 'ovh-eu';
 
     $domain = "ladefoule.fr";
+    $imapServer = 'ssl0.ovh.net';
 
     $client = new Client([
         'timeout' => 1,
@@ -27,61 +29,69 @@
         ]
     ]);
 
-    // $ovh = new Api( $applicationKey,  // Application Key
-    //             $applicationSecret,  // Application Secret
-    //             $endpoint,      // Endpoint of API OVH Europe (List of available endpoints)
-    //             $consumer_key); // Consumer Key
-
     // Get servers list
     $conn = new Api($applicationKey,
-            $applicationSecret,
-            $endpoint,
-            $consumer_key,
-            $client
-        );
+        $applicationSecret,
+        $endpoint,
+        $consumer_key,
+        $client
+    );
 
-    // Activation d'un répondeur
-    // print_r($_POST);
-    if(isset($_POST['responder_post'])){
-        $account = $_POST['email'];
-        $emailCopy = $_POST['email-copie'];
-        $copy = isset($_POST['copie']) ? true : false;
-        $content = $_POST['message'];
-        $fromDate = new Carbon($_POST['debut']);
-        $toDate = new Carbon($_POST['fin']);
+    $method = $_SERVER['REQUEST_METHOD'];
 
-        try {
-            // $result = $conn->get("/email/domain/$domain/responder", array(
-            //     'account' => $account, // Responder name (type: string)
-            // ));
-    
-            $result = $conn->post("/email/domain/$domain/responder", array(
-                'account' => $account, // Account of domain (type: string)
-                'content' => $content, // Content of responder (type: string)
-                'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
-                'copyTo' => $emailCopy, // Account where copy emails (type: string)
-                'from' => $fromDate, // Date of start responder (type: datetime)
-                'to' => $toDate, // Date of end responder (type: datetime)
-            ));
+    switch ($method) {
+        case 'POST':
+            $account = $_POST['email'];
+            // $password = $_POST['password'];
+            $emailCopy = $_POST['email-copie'];
+            $copy = isset($_POST['copie']) ? true : false;
+            $content = $_POST['message'];
+            $fromDate = new Carbon($_POST['debut']);
+            $toDate = new Carbon($_POST['fin']);
 
-            print_r( $result );
+            // $email = $account .'@'. $domain;
+            // if (!canLoginEmailAccount($imapServer, $email, $password)){
+            //     $class = 'danger';
+            //     $message = "Impossible de vous connecter, veuillez rééssayer.";
+            //     break;            
+            // }
 
-            ?>
-                <div class="alert alert-success alert-block">    
-                    <button type="button" class="close" data-dismiss="alert">×</button>    
-                    <strong>Répondeur créé avec succès !</strong>
-                </div>
-            <?php
-        } catch (Exception $e) {
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-            // echo $responseBodyAsString;
-            ?>
-            <div class="alert alert-danger alert-block">    
-                <button type="button" class="close" data-dismiss="alert">×</button>    
-                <strong>Une erreur s'est produite, veuillez recommencer !</strong>
-            </div>
-            <?php
-        }
+            try {    
+                $result = $conn->post("/email/domain/$domain/responder", array(
+                    'account' => $account, // Account of domain (type: string)
+                    'content' => $content, // Content of responder (type: string)
+                    'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
+                    'copyTo' => $emailCopy, // Account where copy emails (type: string)
+                    'from' => $fromDate, // Date of start responder (type: datetime)
+                    'to' => $toDate, // Date of end responder (type: datetime)
+                ));
+        
+                $class = 'success';
+                $message = "Répondeur créé avec succès !";
+            } catch (Exception $e) {
+                // $response = $e->getResponse();
+                // $responseBodyAsString = $response->getBody()->getContents();
+                // echo $responseBodyAsString;
+                
+                $class = 'danger';
+                $message = "Une erreur s'est produite, merci de rééssayer.";
+            }
+            break;
+        
+        default:
+            # code...
+            break;
     }
+
+    // Personnalisation du message
+    if(isset($message)){
+        ?>
+            <div class="alert alert-<?php echo $class ?> alert-block">    
+                <button type="button" class="close" data-dismiss="alert">×</button>    
+                <strong><?php echo $message ?></strong>
+            </div>
+        <?php 
+    }
+
+    include('footer.php') 
 ?>
