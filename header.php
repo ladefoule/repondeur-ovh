@@ -33,7 +33,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="delete.php">Supprimer</a>
             </li> -->
-            <li class="nav-item dropdown">
+            <!-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Répondeur
                 </a>
@@ -43,7 +43,7 @@
                     <a class="dropdown-item" href="/update.php">Modifier</a>
                     <a class="dropdown-item" href="/delete.php">Supprimer</a>
                 </div>
-            </li>
+            </li> -->
             </ul>
         </div>
     </nav>

@@ -37,57 +37,73 @@
     $classError = 'danger';
 
     $method = $_SERVER['REQUEST_METHOD'];
-    
+    $api = '';
+
     if($method == "POST"){
-        $action = $_POST['method'] ?? '';
+        if(isset($_POST['action']))
+            $action = $_POST['action'];
+
+        if(isset($_POST['api'])){
+            $action = $_POST['api'];
+            $api = $action;
+        }
         // ON VERIFIE ICI L'USER ET ON LE REDIRIGE VERS LE FORM SIYABESOIN
         // SI l'auth echous alors on sort
-
+        $account = $_POST['email'];
+        
         switch ($action) {
             case 'POST':
-                $account = $_POST['email'];
-                // $password = $_POST['password'];
-                $emailCopy = $_POST['email-copie'];
-                $copy = isset($_POST['copie']) ? true : false;
-                $content = $_POST['message'];
-                $fromDate = new Carbon($_POST['debut']);
-                $toDate = new Carbon($_POST['fin']);
+                if(! $api){
+                    include('form.php');
+                }else{
+                    $copyTo = $_POST['email-copie'];
+                    $copy = isset($_POST['copie']) ? true : false;
+                    $content = $_POST['message'];
+                    $from = new Carbon($_POST['debut']);
+                    $to = new Carbon($_POST['fin']);
 
-                // $email = $account .'@'. $domain;
-                // if (!canLoginEmailAccount($imapServer, $email, $password)){
-                //     $class = 'danger';
-                //     $message = "Impossible de vous connecter, veuillez rééssayer.";
-                //     break;            
-                // }
+                    // $email = $account .'@'. $domain;
+                    // if (!canLoginEmailAccount($imapServer, $email, $password)){
+                    //     $class = 'danger';
+                    //     $message = "Impossible de vous connecter, veuillez rééssayer.";
+                    //     break;            
+                    // }
 
-                try {    
-                    $result = $conn->post("/email/domain/$domain/responder", array(
-                        'account' => $account, // Account of domain (type: string)
-                        'content' => $content, // Content of responder (type: string)
-                        'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
-                        'copyTo' => $emailCopy, // Account where copy emails (type: string)
-                        'from' => $fromDate, // Date of start responder (type: datetime)
-                        'to' => $toDate, // Date of end responder (type: datetime)
-                    ));
-            
-                    $class = 'success';
-                    $message = "Répondeur créé avec succès !";
-                } catch (Exception $e) {
-                    // $response = $e->getResponse();
-                    // $responseBodyAsString = $response->getBody()->getContents();
-                    // echo $responseBodyAsString;
-                    
-                    $class = $classError;
-                    $message = $messageError;
+                    try {    
+                        $result = $conn->post("/email/domain/$domain/responder", array(
+                            'account' => $account, // Account of domain (type: string)
+                            'content' => $content, // Content of responder (type: string)
+                            'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
+                            'copyTo' => $copyTo, // Account where copy emails (type: string)
+                            'from' => $from, // Date of start responder (type: datetime)
+                            'to' => $to, // Date of end responder (type: datetime)
+                        ));
+                
+                        $class = 'success';
+                        $message = "Répondeur créé avec succès !";
+                    } catch (Exception $e) {
+                        // $response = $e->getResponse();
+                        // $responseBodyAsString = $response->getBody()->getContents();
+                        // echo $responseBodyAsString;
+                        
+                        $class = $classError;
+                        $message = $messageError;
+                    }
                 }
                 break;
 
             case 'GET':
-
+                $result = $conn->get("/email/domain/$domain/responder/$account");
+                $copyTo = $result['copyTo'];
+                $copy = $result['copy'];
+                $content = $result['content'];
+                $from = $result['from'];
+                $to = $result['to'];
+                include('form.php');
+                // print_r($result);
                 break;
 
             case 'DELETE':
-                $account = $_POST['email'];
                 try {  
                     $result = $conn->delete("/email/domain/$domain/responder/$account");
                     $class = 'success';
@@ -118,7 +134,6 @@
         }
     }else{
 ?>
-
     <div class="col-lg-8 p-0">
         <div class="card">
             <div class="card-header p-3">
@@ -139,9 +154,9 @@
             </div>
         </div>
     </div>
-
 <?php 
     }
+
 include('footer.php');
 
 ?>
