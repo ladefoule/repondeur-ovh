@@ -1,0 +1,7 @@
+{
+    "require": {
+        "ovh/ovh": "^2.1",
+        "nesbot/carbon": "^2.45",
+        "twbs/bootstrap": "^4.6"
+    }
+}
