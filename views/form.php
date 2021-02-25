@@ -7,7 +7,7 @@
 
     <div class="form-group">
         <label for="content">Message <span class="text-danger">*</span></label>
-        <textarea class="form-control" required id="content" name="message"><?php echo $content ?></textarea>
+        <textarea class="form-control" required id="content" name="content"><?php echo $content ?></textarea>
     </div>
     
     <div class="form-group">
@@ -34,5 +34,5 @@
         <input type="date" required class="form-control" id="to" name="to" value="<?php echo $to ?>">
     </div>
 
-    <button type="submit" class="btn btn-primary px-4" name="api" value="<?php echo $actions[$route][1] ?>"><?php echo $actions[$route][0] ?></button>
+    <button type="submit" class="btn btn-primary px-4" name="action" value="<?php echo $actions[$route][1] ?>"><?php echo $actions[$route][0] ?></button>
 </form>

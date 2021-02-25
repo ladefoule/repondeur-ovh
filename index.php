@@ -1,4 +1,6 @@
 <?php 
+    session_start();
+    // session_destroy();
     require __DIR__ . '/vendor/autoload.php';
     require('./src/fonctions.php');
     use \Ovh\Api;
@@ -41,12 +43,13 @@
     );
 
     $messageError = "Une erreur s'est produite, merci de rééssayer. ";
-    $needToConnect = true;
     $classError = 'danger';
 
+    $account = $_SESSION['account'] ?? '';
+    $needToConnect = $_SESSION['needToConnect'] ?? true;
     $method = $_SERVER['REQUEST_METHOD'];
 
-    if($needToConnect){ 
+    if($needToConnect){
         if($method == 'GET'){
             ob_start();
             include('./views/login.php');
@@ -59,6 +62,7 @@
             $account = $_POST['account'];
             $email = $account .'@'. $domain;
             $password = $_POST['password'];
+
             if (! canLoginEmailAccount($imapServer, $email, $password)){        
                 $class = 'danger';
                 $message = "Impossible de vous connecter, veuillez rééssayer.";
@@ -66,8 +70,9 @@
                 ob_start();
                 include('./views/login.php');
                 $content = ob_get_clean();
-            }else
+            }else{
                 $needToConnect = false;
+            }
         }
     }else{
         // Accès à la bonne route
@@ -96,6 +101,12 @@
                     ob_start();
                     include('./views/form.php');
                     $content = ob_get_clean();
+                    break;
+
+                case 'logout':
+                    session_destroy();
+                    $needToConnect = true;
+                    $account = '';
                     break;
 
                 default:
@@ -171,5 +182,7 @@
         }
     }
 
-    require './views/layout.php'
+    require './views/layout.php';
+    $_SESSION['needToConnect'] = $needToConnect;
+    $_SESSION['account'] = $account;
 ?>

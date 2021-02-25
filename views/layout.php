@@ -19,7 +19,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav">
-                    <?php if($needToConnect){ ?>
+                    <?php if(! $account){ ?>
                     <li class="nav-item">
                         <a class="nav-link active" href="/">Accueil</a>
                     </li>
@@ -29,15 +29,15 @@
                             Gestion du répondeur
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="/create.php">Créer</a>
-                            <a class="dropdown-item" href="/show.php">Visualiser</a>
-                            <a class="dropdown-item" href="/update.php">Modifier</a>
-                            <a class="dropdown-item" href="/delete.php">Supprimer</a>
+                            <a class="dropdown-item" href="/?route=create">Créer</a>
+                            <a class="dropdown-item" href="/?route=show">Visualiser</a>
+                            <a class="dropdown-item" href="/?route=update">Modifier</a>
+                            <a class="dropdown-item" href="/?route=delete">Supprimer</a>
                         </div>
                     </li>
                     <?php } ?>
                 </ul>
-                <?php if(! $needToConnect){ ?>
+                <?php if($account){ ?>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item nav-link-profil dropdown pl-2 d-flex flex-shrink-0">
                         <span id="navbarDropdown" class="nav-link dropdown-toggle text-white" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -45,7 +45,7 @@
                         </span>
 
                         <div class="dropdown-menu dropdown-menu-right mb-2" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/logout.php">
+                            <a class="dropdown-item" href="/?route=logout">
                                 Se déconnecter
                             </a>
                         </div>
@@ -61,10 +61,12 @@
             // Personnalisation du message
             if(isset($message) && isset($class)){
                 ?>
+                <div class="col-12">
                     <div class="alert alert-<?php echo $class ?> alert-block">    
                         <button type="button" class="close" data-dismiss="alert">×</button>    
                         <strong><?php echo $message ?></strong>
                     </div>
+                </div>
                 <?php 
             }
         ?>
