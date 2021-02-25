@@ -6,6 +6,7 @@
     use \Ovh\Api;
     use \GuzzleHttp\Client;
     use \Carbon\Carbon;
+    use \GuzzleHttp\Exception\RequestException;
     
     // Informations about your application
     // Répondeur 30 jours
@@ -16,16 +17,22 @@
 
     // OVH 30 Jours total
     // OVH 30 Jours total
-    $applicationKey = "4pI5RSfi34liLLm9";
-    $applicationSecret = "0efF73MYgnwchNFEVguxKtqkpFrXOfUu";
-    $consumer_key = "KnoE3IZ4Tf1So5Eo03mxmUU4KuL7txwk";
+    // $applicationKey = "4pI5RSfi34liLLm9";
+    // $applicationSecret = "0efF73MYgnwchNFEVguxKtqkpFrXOfUu";
+    // $consumer_key = "KnoE3IZ4Tf1So5Eo03mxmUU4KuL7txwk";
+
+    // OVH tt
+    // OVH tt
+    $applicationKey = "b4njhq0dx6XGODgR";
+    $applicationSecret = "IQAPoNlQbpthEghep2de6EdYIX42IMC1";
+    $consumer_key = "3Kk1jf1sGH29wpmyRShbZSYvAuM2CIr3";
     
     // Information about API and rights asked
     $endpoint = 'ovh-eu';
 
     $domain = "ladefoule.fr";
     $imapServer = 'ssl0.ovh.net';
-    $content = '';
+    $contenu = '';
 
     $client = new Client([
         'timeout' => 1,
@@ -53,7 +60,7 @@
         if($method == 'GET'){
             ob_start();
             include('./views/login.php');
-            $content = ob_get_clean();
+            $contenu = ob_get_clean();
         }
 
         // ON VERIFIE ICI L'USER ET ON LE REDIRIGE VERS LE FORM SIYABESOIN
@@ -69,7 +76,7 @@
 
                 ob_start();
                 include('./views/login.php');
-                $content = ob_get_clean();
+                $contenu = ob_get_clean();
             }else{
                 $needToConnect = false;
             }
@@ -78,29 +85,48 @@
         // Accès à la bonne route
         if($method == 'GET'){
             $route = $_GET['route'] ?? '';
+            $to = $from = $copy = $content = '';
             switch ($route) {
                 case 'create':
                     ob_start();
                     include('./views/form.php');
-                    $content = ob_get_clean();
+                    $contenu = ob_get_clean();
                     break;
 
                 case 'update':
                     ob_start();
                     include('./views/form.php');
-                    $content = ob_get_clean();
+                    $contenu = ob_get_clean();
                     break;
 
                 case 'show':
+                    try { 
+                        $result = $conn->get("/email/domain/$domain/responder/$account");
+                        // $copyTo = $result['copyTo'];
+                        $copy = $result['copy'];
+                        $content = $result['content'];
+                        $from = new Carbon($result['from']);
+                        $from = $from->format('Y-m-d');
+                        $to = new Carbon($result['to']);
+                        $to = $to->format('Y-m-d');
+                    } catch (RequestException $e) {
+                        $response = $e->getResponse();
+                        $responseBodyAsString = $response->getBody()->getContents();
+                        echo $responseBodyAsString;
+                        
+                        $class = $classError;
+                        $message = $messageError;
+                    }  
+
                     ob_start();
                     include('./views/form.php');
-                    $content = ob_get_clean();
+                    $contenu = ob_get_clean();
                     break;
                 
                 case 'delete':
                     ob_start();
                     include('./views/form.php');
-                    $content = ob_get_clean();
+                    $contenu = ob_get_clean();
                     break;
 
                 case 'logout':
@@ -137,7 +163,7 @@
                 
                         $class = 'success';
                         $message = "Répondeur créé avec succès !";
-                    } catch (Exception $e) {
+                    } catch (RequestException $e) {
                         $response = $e->getResponse();
                         $responseBodyAsString = $response->getBody()->getContents();
                         echo $responseBodyAsString;
@@ -147,25 +173,12 @@
                     }
                     break;
 
-                case 'GET':
-                    $result = $conn->get("/email/domain/$domain/responder/$account");
-                    // $copyTo = $result['copyTo'];
-                    $copy = $result['copy'];
-                    $content = $result['content'];
-                    $from = $result['from'];
-                    $to = $result['to'];
-
-                    ob_start();
-                    include('./views/form.php');
-                    $content = ob_get_clean();
-                    break;
-
                 case 'DELETE':
                     try {  
                         $result = $conn->delete("/email/domain/$domain/responder/$account");
                         $class = 'success';
                         $message = "Répondeur supprimé avec succès !";
-                    } catch (Exception $e) {
+                    } catch (RequestException $e) {
                         $response = $e->getResponse();
                         $responseBodyAsString = $response->getBody()->getContents();
                         echo $responseBodyAsString;

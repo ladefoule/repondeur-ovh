@@ -56,13 +56,13 @@
         </div>
     </nav>
 
-    <div class="container d-flex justify-content-center pt-3">
+    <div class="container d-flex justify-content-center pt-3 flex-wrap">
         <?php
             // Personnalisation du message
             if(isset($message) && isset($class)){
                 ?>
-                <div class="col-12">
-                    <div class="alert alert-<?php echo $class ?> alert-block">    
+                <div class="col-12 d-flex justify-content-center">
+                    <div class="col-md-6 alert alert-<?php echo $class ?> alert-block">    
                         <button type="button" class="close" data-dismiss="alert">×</button>    
                         <strong><?php echo $message ?></strong>
                     </div>
@@ -70,7 +70,7 @@
                 <?php 
             }
         ?>
-        <?php echo $content; ?>
+        <?php echo $contenu; ?>
     </div>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
