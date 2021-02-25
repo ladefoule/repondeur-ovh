@@ -1,22 +1,29 @@
 <?php 
-    include('header.php');
-
     require __DIR__ . '/vendor/autoload.php';
-    require('fonctions.php');
+    require('./src/fonctions.php');
     use \Ovh\Api;
     use \GuzzleHttp\Client;
     use \Carbon\Carbon;
     
     // Informations about your application
-    $applicationKey = "0xllQDAz0TkXJPcO";
-    $applicationSecret = "mUMMiP2AkrFUNC3WuMYS3nfoxIWDJiyh";
-    $consumer_key = "OnRl5zLELRHEJ8wxpKOA2Cts0GuGklRa";
+    // Répondeur 30 jours
+    // Répondeur accès 30 jours
+    $applicationKey = "Pf27SCe4O3oMPFjX";
+    $applicationSecret = "L5YgAPBR6OYLtQT9kERF8b3nnH9DfTr6";
+    $consumer_key = "f1IfmhgXGmAKyjtT8BxttIOq6VnRM5VN";
+
+    // OVH 30 Jours total
+    // OVH 30 Jours total
+    $applicationKey = "4pI5RSfi34liLLm9";
+    $applicationSecret = "0efF73MYgnwchNFEVguxKtqkpFrXOfUu";
+    $consumer_key = "KnoE3IZ4Tf1So5Eo03mxmUU4KuL7txwk";
     
     // Information about API and rights asked
     $endpoint = 'ovh-eu';
 
     $domain = "ladefoule.fr";
     $imapServer = 'ssl0.ovh.net';
+    $content = '';
 
     $client = new Client([
         'timeout' => 1,
@@ -34,47 +41,85 @@
     );
 
     $messageError = "Une erreur s'est produite, merci de rééssayer. ";
+    $needToConnect = true;
     $classError = 'danger';
 
     $method = $_SERVER['REQUEST_METHOD'];
-    $api = '';
 
-    if($method == "POST"){
-        if(isset($_POST['action']))
-            $action = $_POST['action'];
-
-        if(isset($_POST['api'])){
-            $action = $_POST['api'];
-            $api = $action;
+    if($needToConnect){ 
+        if($method == 'GET'){
+            ob_start();
+            include('./views/login.php');
+            $content = ob_get_clean();
         }
+
         // ON VERIFIE ICI L'USER ET ON LE REDIRIGE VERS LE FORM SIYABESOIN
         // SI l'auth echous alors on sort
-        $account = $_POST['email'];
-        
-        switch ($action) {
-            case 'POST':
-                if(! $api){
-                    include('form.php');
-                }else{
-                    $copyTo = $_POST['email-copie'];
-                    $copy = isset($_POST['copie']) ? true : false;
-                    $content = $_POST['message'];
-                    $from = new Carbon($_POST['debut']);
-                    $to = new Carbon($_POST['fin']);
+        if($method == 'POST'){
+            $account = $_POST['account'];
+            $email = $account .'@'. $domain;
+            $password = $_POST['password'];
+            if (! canLoginEmailAccount($imapServer, $email, $password)){        
+                $class = 'danger';
+                $message = "Impossible de vous connecter, veuillez rééssayer.";
 
-                    // $email = $account .'@'. $domain;
-                    // if (!canLoginEmailAccount($imapServer, $email, $password)){
-                    //     $class = 'danger';
-                    //     $message = "Impossible de vous connecter, veuillez rééssayer.";
-                    //     break;            
-                    // }
+                ob_start();
+                include('./views/login.php');
+                $content = ob_get_clean();
+            }else
+                $needToConnect = false;
+        }
+    }else{
+        // Accès à la bonne route
+        if($method == 'GET'){
+            $route = $_GET['route'] ?? '';
+            switch ($route) {
+                case 'create':
+                    ob_start();
+                    include('./views/form.php');
+                    $content = ob_get_clean();
+                    break;
+
+                case 'update':
+                    ob_start();
+                    include('./views/form.php');
+                    $content = ob_get_clean();
+                    break;
+
+                case 'show':
+                    ob_start();
+                    include('./views/form.php');
+                    $content = ob_get_clean();
+                    break;
+                
+                case 'delete':
+                    ob_start();
+                    include('./views/form.php');
+                    $content = ob_get_clean();
+                    break;
+
+                default:
+                    // include('verif-account.php');
+                    break;
+            }
+
+        // Traitement des requêtes vers l'API
+        }else if($method == 'POST'){
+            $action = $_POST['action'] ?? '';
+            switch ($action) {
+                case 'POST':
+                    // $copyTo = $_POST['copyTo'];
+                    $copy = isset($_POST['copy']) ? true : false;
+                    $content = $_POST['content'];
+                    $from = new Carbon($_POST['from']);
+                    $to = new Carbon($_POST['to']);
 
                     try {    
                         $result = $conn->post("/email/domain/$domain/responder", array(
                             'account' => $account, // Account of domain (type: string)
                             'content' => $content, // Content of responder (type: string)
                             'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
-                            'copyTo' => $copyTo, // Account where copy emails (type: string)
+                            // 'copyTo' => $copyTo, // Account where copy emails (type: string)
                             'from' => $from, // Date of start responder (type: datetime)
                             'to' => $to, // Date of end responder (type: datetime)
                         ));
@@ -82,81 +127,49 @@
                         $class = 'success';
                         $message = "Répondeur créé avec succès !";
                     } catch (Exception $e) {
-                        // $response = $e->getResponse();
-                        // $responseBodyAsString = $response->getBody()->getContents();
-                        // echo $responseBodyAsString;
+                        $response = $e->getResponse();
+                        $responseBodyAsString = $response->getBody()->getContents();
+                        echo $responseBodyAsString;
                         
                         $class = $classError;
                         $message = $messageError;
                     }
-                }
-                break;
+                    break;
 
-            case 'GET':
-                $result = $conn->get("/email/domain/$domain/responder/$account");
-                $copyTo = $result['copyTo'];
-                $copy = $result['copy'];
-                $content = $result['content'];
-                $from = $result['from'];
-                $to = $result['to'];
-                include('form.php');
-                // print_r($result);
-                break;
+                case 'GET':
+                    $result = $conn->get("/email/domain/$domain/responder/$account");
+                    // $copyTo = $result['copyTo'];
+                    $copy = $result['copy'];
+                    $content = $result['content'];
+                    $from = $result['from'];
+                    $to = $result['to'];
 
-            case 'DELETE':
-                try {  
-                    $result = $conn->delete("/email/domain/$domain/responder/$account");
-                    $class = 'success';
-                    $message = "Répondeur supprimé avec succès !";
-                } catch (Exception $e) {
-                    // $response = $e->getResponse();
-                    // $responseBodyAsString = $response->getBody()->getContents();
-                    // echo $responseBodyAsString;
-                    
-                    $class = $classError;
-                    $message = $messageError;
-                }
-                break;
-            
-            default:
-                // include('verif-account.php');
-                break;
+                    ob_start();
+                    include('./views/form.php');
+                    $content = ob_get_clean();
+                    break;
+
+                case 'DELETE':
+                    try {  
+                        $result = $conn->delete("/email/domain/$domain/responder/$account");
+                        $class = 'success';
+                        $message = "Répondeur supprimé avec succès !";
+                    } catch (Exception $e) {
+                        $response = $e->getResponse();
+                        $responseBodyAsString = $response->getBody()->getContents();
+                        echo $responseBodyAsString;
+                        
+                        $class = $classError;
+                        $message = $messageError;
+                    }
+                    break;
+                
+                default:
+                    // include('verif-account.php');
+                    break;
+            }
         }
-
-        // Personnalisation du message
-        if(isset($message)){
-            ?>
-                <div class="alert alert-<?php echo $class ?> alert-block">    
-                    <button type="button" class="close" data-dismiss="alert">×</button>    
-                    <strong><?php echo $message ?></strong>
-                </div>
-            <?php 
-        }
-    }else{
-?>
-    <div class="col-lg-8 p-0">
-        <div class="card">
-            <div class="card-header p-3">
-                Gestion de votre répondeur
-            </div>
-            <div class="card-body p-3">
-                <form action="/" method="POST">
-                    <div class="form-row pb-3">
-                        <label for="email" class="col-12">Email <span class="text-danger">*</span></label>
-                        <input type="text" required class="form-control col-8" id="email" name="email"><span class="col-4">@<?php echo $domain ?>r</span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary px-4" name="action" value="POST">Créer</button>
-                    <button type="submit" class="btn btn-info px-4" name="action" value="GET">Voir</button>
-                    <button type="submit" class="btn btn-warning px-4" name="action" value="PUT">Modifier</button>
-                    <button type="submit" class="btn btn-danger px-4" name="action" value="DELETE">Supprimer</button>
-                </form>
-            </div>
-        </div>
-    </div>
-<?php 
     }
 
-include('footer.php');
-
+    require './views/layout.php'
 ?>

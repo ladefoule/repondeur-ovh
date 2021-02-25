@@ -3,8 +3,7 @@
 function canLoginEmailAccount($imapServer, $email, $password)
 {
     try {
-        $mbox = @imap_open('{'.$imapServer.':143}INBOX', "$email", "$password");
-
+        $mbox = imap_open('{'.$imapServer.':993/imap/ssl}INBOX', "$email", "$password");
         if (!$mbox) {
             return false;
         }
@@ -17,3 +16,10 @@ function canLoginEmailAccount($imapServer, $email, $password)
         return false;
     }
 }
+
+$actions = [
+    'show' => ['VOIR', 'GET'],
+    'create' => ['CREER', 'POST'],
+    'update' => ['MODIFIER', 'PUT'],
+    'delete' => ['SUPPRIMER', 'DELETE'],
+];
