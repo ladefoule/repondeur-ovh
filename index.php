@@ -1,13 +1,18 @@
 <?php 
     session_start();
     require __DIR__ . '/vendor/autoload.php';
-    require('./src/fonctions.php');
+    spl_autoload_register(function ($className) {
+        include '/controllers/' . $className . '.php';
+    });
+
+    require_once('./src/fonctions.php');
+    require_once('./controllers/GETController.php');
     use \Ovh\Api;
     use \GuzzleHttp\Client;
     use \Carbon\Carbon;
     use \GuzzleHttp\Exception\RequestException;
 
-    $actions = [
+    $buttons = [
         'delete' => [
             'button' => 'Supprimer',
             'class' => 'danger'
@@ -21,6 +26,8 @@
             'class' => 'info'
         ]
     ];
+
+    $routes = ['delete', 'show'];
     
     // Informations about your application
     // Répondeur 30 jours
@@ -70,7 +77,13 @@
     $account = $_SESSION['account'] ?? '';
     $needToConnect = $_SESSION['needToConnect'] ?? true;
     $method = $_SERVER['REQUEST_METHOD'];
-    $action = $_GET['action'] ?? '';
+    $action = $_GET['action'] ?? 'default';
+
+    if(! in_array($action, $routes) && $action != 'default'){
+        header("Location: /");
+        exit;
+    }
+
 
     if($needToConnect){
         if($method == 'GET'){
@@ -106,48 +119,20 @@
 
         // Accès à la bonne route
         if($method == 'GET'){
-            switch ($action) {
-                case 'create':
-                    $to = $from = $copy = $content = '';
-                    ob_start();
-                    include('./views/form.php');
-                    $contenu = ob_get_clean();
-                    break;
+            $data = [
+                'domain' => $domain,
+                'account' => $account,
+                'conn' => $conn,
+                'buttons' => $buttons,
+                'action' => $action,
+                'responderAvailable' => $responderAvailable
+            ];
 
-                case 'show':
-                    try { 
-                        $result = $conn->get("/email/domain/$domain/responder/$account/");
-                        $copy = $result['copy'];
-                        $content = htmlentities($result['content']);
-                        $from = new Carbon($result['from']);
-                        $from = $from->format('Y-m-d');
-                        $to = new Carbon($result['to']);
-                        $to = $to->format('Y-m-d');
-                    } catch (RequestException $e) {                        
-                        $class = $classError;
-                        $message = $messageError;
-                    }  
+            $controller = $method.'Controller';
 
-                    ob_start();
-                    include('./views/form.php');
-                    $contenu = ob_get_clean();
-                    break;
-
-                case 'logout':
-                    session_destroy();
-                    $needToConnect = true;
-                    $account = '';
-                    ob_start();
-                    include('./views/login.php');
-                    $contenu = ob_get_clean();
-                    break;
-
-                default:
-                    ob_start();
-                    include('./views/logged.php');
-                    $contenu = ob_get_clean();
-                    break;
-            }
+            ob_start();
+            $controller::$action($data);
+            $contenu = ob_get_clean();
 
         // Traitement des requêtes vers l'API
         }else if($method == 'POST'){
@@ -163,7 +148,6 @@
                             'account' => $account, // Account of domain (type: string)
                             'content' => $content, // Content of responder (type: string)
                             'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
-                            // 'copyTo' => $copyTo, // Account where copy emails (type: string)
                             'from' => $from, // Date of start responder (type: datetime)
                             'to' => $to, // Date of end responder (type: datetime)
                         ));
