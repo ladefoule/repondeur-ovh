@@ -7,13 +7,24 @@
     use \GuzzleHttp\Client;
     use \Carbon\Carbon;
     use \GuzzleHttp\Exception\RequestException;
+
+    $actions = [
+        'delete' => [
+            'button' => 'Supprimer',
+            'class' => 'danger'
+        ],
+        'create' => [
+            'button' => 'Ajouter',
+            'class' => 'primary'
+        ]
+    ];
     
     // Informations about your application
     // Répondeur 30 jours
     // Répondeur accès 30 jours
-    $applicationKey = "Pf27SCe4O3oMPFjX";
-    $applicationSecret = "L5YgAPBR6OYLtQT9kERF8b3nnH9DfTr6";
-    $consumer_key = "f1IfmhgXGmAKyjtT8BxttIOq6VnRM5VN";
+    // $applicationKey = "Pf27SCe4O3oMPFjX";
+    // $applicationSecret = "L5YgAPBR6OYLtQT9kERF8b3nnH9DfTr6";
+    // $consumer_key = "f1IfmhgXGmAKyjtT8BxttIOq6VnRM5VN";
 
     // OVH 30 Jours total
     // OVH 30 Jours total
@@ -21,11 +32,11 @@
     // $applicationSecret = "0efF73MYgnwchNFEVguxKtqkpFrXOfUu";
     // $consumer_key = "KnoE3IZ4Tf1So5Eo03mxmUU4KuL7txwk";
 
-    // OVH tt
-    // OVH tt
-    $applicationKey = "b4njhq0dx6XGODgR";
-    $applicationSecret = "IQAPoNlQbpthEghep2de6EdYIX42IMC1";
-    $consumer_key = "3Kk1jf1sGH29wpmyRShbZSYvAuM2CIr3";
+    // GET DEL POST 7 DAYS resp/*
+    // GET DEL POST 7 DAYS resp/*
+    $applicationKey = "Nti8t2jrFqCJzEjJ";
+    $applicationSecret = "RFBZQ6VKGm6PM7c5cbOVWugQY6y8A5tH";
+    $consumer_key = "2MFu1ri4lYHFCBv6BwHgWNgzZLQa3uZg";
     
     // Information about API and rights asked
     $endpoint = 'ovh-eu';
@@ -35,6 +46,7 @@
     $contenu = '';
 
     $client = new Client([
+        // 'http_errors' => false,
         'timeout' => 1,
         'headers' => [
             'User-Agent' => 'api_client'
@@ -55,17 +67,14 @@
     $account = $_SESSION['account'] ?? '';
     $needToConnect = $_SESSION['needToConnect'] ?? true;
     $method = $_SERVER['REQUEST_METHOD'];
+    $action = $_GET['action'] ?? '';
 
     if($needToConnect){
         if($method == 'GET'){
             ob_start();
             include('./views/login.php');
             $contenu = ob_get_clean();
-        }
-
-        // ON VERIFIE ICI L'USER ET ON LE REDIRIGE VERS LE FORM SIYABESOIN
-        // SI l'auth echous alors on sort
-        if($method == 'POST'){
+        }else if($method == 'POST'){
             $account = $_POST['account'];
             $email = $account .'@'. $domain;
             $password = $_POST['password'];
@@ -73,7 +82,7 @@
             if (! canLoginEmailAccount($imapServer, $email, $password)){        
                 $class = 'danger';
                 $message = "Impossible de vous connecter, veuillez rééssayer.";
-
+                
                 ob_start();
                 include('./views/login.php');
                 $contenu = ob_get_clean();
@@ -82,27 +91,26 @@
             }
         }
     }else{
+        try { 
+            $conn->get("/email/domain/$domain/responder/$account/");
+            $responderAvailable = true;
+        } catch (RequestException $e) {
+            $responderAvailable = false;
+        }
+
         // Accès à la bonne route
         if($method == 'GET'){
-            $route = $_GET['route'] ?? '';
             $to = $from = $copy = $content = '';
-            switch ($route) {
+            switch ($action) {
                 case 'create':
                     ob_start();
                     include('./views/form.php');
                     $contenu = ob_get_clean();
                     break;
 
-                case 'update':
-                    ob_start();
-                    include('./views/form.php');
-                    $contenu = ob_get_clean();
-                    break;
-
-                case 'show':
+                case 'delete':
                     try { 
-                        $result = $conn->get("/email/domain/$domain/responder/$account");
-                        // $copyTo = $result['copyTo'];
+                        $result = $conn->get("/email/domain/$domain/responder/$account/");
                         $copy = $result['copy'];
                         $content = $result['content'];
                         $from = new Carbon($result['from']);
@@ -122,12 +130,6 @@
                     include('./views/form.php');
                     $contenu = ob_get_clean();
                     break;
-                
-                case 'delete':
-                    ob_start();
-                    include('./views/form.php');
-                    $contenu = ob_get_clean();
-                    break;
 
                 case 'logout':
                     session_destroy();
@@ -136,23 +138,25 @@
                     break;
 
                 default:
-                    // include('verif-account.php');
+                    ob_start();
+                    include('./views/logged.php');
+                    $contenu = ob_get_clean();
                     break;
             }
 
         // Traitement des requêtes vers l'API
         }else if($method == 'POST'){
-            $action = $_POST['action'] ?? '';
+            // $action = $_POST['action'] ?? '';
             switch ($action) {
-                case 'POST':
+                case 'create':
                     // $copyTo = $_POST['copyTo'];
                     $copy = isset($_POST['copy']) ? true : false;
                     $content = $_POST['content'];
                     $from = new Carbon($_POST['from']);
                     $to = new Carbon($_POST['to']);
 
-                    try {    
-                        $result = $conn->post("/email/domain/$domain/responder", array(
+                    try {  
+                        $result = $conn->post("/email/domain/$domain/responder/", array(
                             'account' => $account, // Account of domain (type: string)
                             'content' => $content, // Content of responder (type: string)
                             'copy' => $copy, // If false, emails will be dropped. If true and copyTo field is empty, emails will be delivered to your mailbox. If true and copyTo is set with an address, emails will be delivered to this address (type: boolean)
@@ -171,11 +175,15 @@
                         $class = $classError;
                         $message = $messageError;
                     }
+
+                    ob_start();
+                    include('./views/logged.php');
+                    $contenu = ob_get_clean();
                     break;
 
-                case 'DELETE':
+                case 'delete':
                     try {  
-                        $result = $conn->delete("/email/domain/$domain/responder/$account");
+                        $result = $conn->delete("/email/domain/$domain/responder/$account/");
                         $class = 'success';
                         $message = "Répondeur supprimé avec succès !";
                     } catch (RequestException $e) {
@@ -186,6 +194,9 @@
                         $class = $classError;
                         $message = $messageError;
                     }
+                    ob_start();
+                    include('./views/logged.php');
+                    $contenu = ob_get_clean();
                     break;
                 
                 default:
