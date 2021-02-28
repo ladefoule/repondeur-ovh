@@ -19,20 +19,22 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav">
-                    <?php if(! $account){ ?>
                     <li class="nav-item">
                         <a class="nav-link active" href="/">Accueil</a>
                     </li>
-                    <?php }else{ ?>
+                    <?php if($account){ ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Gestion du répondeur
+                            Votre répondeur
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="/?route=create">Créer</a>
-                            <a class="dropdown-item" href="/?route=show">Visualiser</a>
-                            <a class="dropdown-item" href="/?route=update">Modifier</a>
-                            <a class="dropdown-item" href="/?route=delete">Supprimer</a>
+                            <?php if(! $responderAvailable){ ?>
+                                <a class="dropdown-item" href="/?action=create">Créer</a>
+                            <?php }else{ ?>
+                                <a class="dropdown-item" href="/?action=show">Visualiser</a>
+                            <?php } ?>
+                            <!-- <a class="dropdown-item" href="/?action=update">Modifier</a> -->
+                            <!-- <a class="dropdown-item" href="/?action=delete">Supprimer</a> -->
                         </div>
                     </li>
                     <?php } ?>
@@ -45,7 +47,7 @@
                         </span>
 
                         <div class="dropdown-menu dropdown-menu-right mb-2" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/?route=logout">
+                            <a class="dropdown-item" href="/?action=logout">
                                 Se déconnecter
                             </a>
                         </div>
@@ -56,7 +58,7 @@
         </div>
     </nav>
 
-    <div class="container d-flex justify-content-center pt-3 flex-wrap">
+    <div class="container d-flex justify-content-center py-3 flex-wrap">
         <?php
             // Personnalisation du message
             if(isset($message) && isset($class)){

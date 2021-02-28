@@ -18,9 +18,3 @@ function canLoginEmailAccount($imapServer, $email, $password)
     }
 }
 
-// $actions = [
-//     'show' => ['VOIR', 'GET'],
-//     'create' => ['CREER', 'POST'],
-//     'update' => ['MODIFIER', 'PUT'],
-//     'delete' => ['SUPPRIMER', 'DELETE'],
-// ];

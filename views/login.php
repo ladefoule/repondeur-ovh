@@ -8,7 +8,7 @@
                 <div class="form-row pb-3">
                     <label for="account" class="col-md-3 col-form-label text-md-right"><span class="text-danger">*</span> Email</label>
                     <div class="col-md-9 d-flex align-items-center">
-                        <input type="text" required class="form-control col-6" id="account" name="account">
+                        <input type="text" required class="form-control col-6" id="account" name="account" <?php echo $account ?>>
                         <span class="col-6">@<?php echo $domain ?></span>
                     </div>
                 </div>

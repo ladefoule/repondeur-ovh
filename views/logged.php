@@ -15,7 +15,7 @@
             <div class="form-row pb-3">
                 <div class="offset-md-3 col-md-9">
                     <?php if($responderAvailable){ ?>
-                        <a href="?action=delete"><button class="btn btn-danger" name="action"><?php echo $actions['delete']['button'] ?></button></a>
+                        <a href="?action=show"><button class="btn btn-danger" name="action"><?php echo $actions['show']['button'] ?></button></a>
                     <?php }else{ ?>
                         <a href="?action=create"><button class="btn btn-primary" name="action"><?php echo $actions['create']['button'] ?></button></a>
                     <?php } ?>

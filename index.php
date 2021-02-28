@@ -1,6 +1,5 @@
 <?php 
     session_start();
-    // session_destroy();
     require __DIR__ . '/vendor/autoload.php';
     require('./src/fonctions.php');
     use \Ovh\Api;
@@ -14,8 +13,12 @@
             'class' => 'danger'
         ],
         'create' => [
-            'button' => 'Ajouter',
+            'button' => 'Créer',
             'class' => 'primary'
+        ],
+        'show' => [
+            'button' => 'Visualiser',
+            'class' => 'info'
         ]
     ];
     
@@ -75,9 +78,9 @@
             include('./views/login.php');
             $contenu = ob_get_clean();
         }else if($method == 'POST'){
-            $account = $_POST['account'];
+            $account = htmlentities($_POST['account']);
             $email = $account .'@'. $domain;
-            $password = $_POST['password'];
+            $password = htmlentities($_POST['password']);
 
             if (! canLoginEmailAccount($imapServer, $email, $password)){        
                 $class = 'danger';
@@ -88,6 +91,9 @@
                 $contenu = ob_get_clean();
             }else{
                 $needToConnect = false;
+                ob_start();
+                include('./views/logged.php');
+                $contenu = ob_get_clean();
             }
         }
     }else{
@@ -100,28 +106,24 @@
 
         // Accès à la bonne route
         if($method == 'GET'){
-            $to = $from = $copy = $content = '';
             switch ($action) {
                 case 'create':
+                    $to = $from = $copy = $content = '';
                     ob_start();
                     include('./views/form.php');
                     $contenu = ob_get_clean();
                     break;
 
-                case 'delete':
+                case 'show':
                     try { 
                         $result = $conn->get("/email/domain/$domain/responder/$account/");
                         $copy = $result['copy'];
-                        $content = $result['content'];
+                        $content = htmlentities($result['content']);
                         $from = new Carbon($result['from']);
                         $from = $from->format('Y-m-d');
                         $to = new Carbon($result['to']);
                         $to = $to->format('Y-m-d');
-                    } catch (RequestException $e) {
-                        $response = $e->getResponse();
-                        $responseBodyAsString = $response->getBody()->getContents();
-                        echo $responseBodyAsString;
-                        
+                    } catch (RequestException $e) {                        
                         $class = $classError;
                         $message = $messageError;
                     }  
@@ -135,6 +137,9 @@
                     session_destroy();
                     $needToConnect = true;
                     $account = '';
+                    ob_start();
+                    include('./views/login.php');
+                    $contenu = ob_get_clean();
                     break;
 
                 default:
@@ -146,12 +151,10 @@
 
         // Traitement des requêtes vers l'API
         }else if($method == 'POST'){
-            // $action = $_POST['action'] ?? '';
             switch ($action) {
                 case 'create':
-                    // $copyTo = $_POST['copyTo'];
                     $copy = isset($_POST['copy']) ? true : false;
-                    $content = $_POST['content'];
+                    $content = htmlentities($_POST['content']);
                     $from = new Carbon($_POST['from']);
                     $to = new Carbon($_POST['to']);
 
@@ -167,42 +170,36 @@
                 
                         $class = 'success';
                         $message = "Répondeur créé avec succès !";
-                    } catch (RequestException $e) {
-                        $response = $e->getResponse();
-                        $responseBodyAsString = $response->getBody()->getContents();
-                        echo $responseBodyAsString;
-                        
+                        $responderAvailable = true;
+                    } catch (RequestException $e) {                        
                         $class = $classError;
                         $message = $messageError;
                     }
-
-                    ob_start();
-                    include('./views/logged.php');
-                    $contenu = ob_get_clean();
                     break;
 
-                case 'delete':
+                case 'show':
                     try {  
                         $result = $conn->delete("/email/domain/$domain/responder/$account/");
                         $class = 'success';
                         $message = "Répondeur supprimé avec succès !";
+                        $responderAvailable = false;
                     } catch (RequestException $e) {
-                        $response = $e->getResponse();
-                        $responseBodyAsString = $response->getBody()->getContents();
-                        echo $responseBodyAsString;
+                        // $response = $e->getResponse();
+                        // $responseBodyAsString = $response->getBody()->getContents();
+                        // echo $responseBodyAsString;
                         
                         $class = $classError;
                         $message = $messageError;
                     }
-                    ob_start();
-                    include('./views/logged.php');
-                    $contenu = ob_get_clean();
                     break;
                 
                 default:
-                    // include('verif-account.php');
                     break;
+
             }
+            ob_start();
+            include('./views/logged.php');
+            $contenu = ob_get_clean();
         }
     }
 
