@@ -30,7 +30,11 @@
         ]
     ];
 
-    $routes = ['create', 'show', 'delete', 'logout'];
+    $routes = [
+        'GET' => ['create', 'show', 'delete', 'logout', 'default'],
+        'POST' => ['create', 'default'],
+        // 'AUTH' => ['login', 'default'],
+    ];
 
     $client = new Client([
         // 'http_errors' => false, // Todo : Essayer de trouver une solution pour récupérer le code erreur en utilisant la classe Api d'OVH
@@ -52,24 +56,34 @@
     $classError = 'danger';
 
     $account = $_SESSION['account'] ?? '';
-    $needToConnect = $_SESSION['needToConnect'] ?? true;
     $method = $_SERVER['REQUEST_METHOD'];
     $action = $_GET['action'] ?? 'default';
+    // echo $account;exit();
 
-    if(! in_array($action, $routes) && $action != 'default'){
+    if(! in_array($action, $routes[$method])){
         header("Location: /");
         exit;
     }
 
+    // Les données utilisées dans les différentes méthodes des controllers
+    $array = [
+        'domain' => $domain,
+        'account' => $account,
+        'conn' => $conn,
+        'buttons' => $buttons,
+        'action' => $action,
+        'classError' => $classError,
+        'messageError' => $messageError,
+    ];
+    
     // Si aucun membre n'est connecté
-    if($needToConnect){
+    if(! $account){
         if($method == 'GET'){
             ob_start();
             include('./views/login.php');
             $contenu = ob_get_clean();
         }else if($method == 'POST'){
-            $account = htmlentities($_POST['account']);
-            $email = $account .'@'. $domain;
+            $email = htmlentities($_POST['account']) .'@'. $domain;
             $password = htmlentities($_POST['password']);
 
             if (! canLoginEmailAccount($imapServer, $email, $password)){        
@@ -77,46 +91,29 @@
                 $message = "Impossible de vous connecter, veuillez rééssayer.";
                 
                 ob_start();
+                include('./views/notification.php');
                 include('./views/login.php');
                 $contenu = ob_get_clean();
             }else{
-                $needToConnect = false;
+                // Variables utilisées dans la view logged.php
+                $account = $array['account'];
+                $responder = getApi($array);
+
+                $_SESSION['account'] = $account; // On active la SESSION
+                $array['account'] = $account; // On met à jour la variable $array
+                
                 ob_start();
                 include('./views/logged.php');
                 $contenu = ob_get_clean();
             }
         }
-    }else{
-        // On checke si le compte possède déjà un répondeur ou non
-        // Si une erreur est générée alors on suppose que c'est non
-        try {
-            $conn->get("/email/domain/$domain/responder/$account/");
-            $_SESSION['responderAvailable'] = true;
-        } catch (RequestException $e) {
-            unset($_SESSION['responderAvailable']);
-        }
-
-        // Les données utilisées dans les différentes méthodes des controllers
-        $data = [
-            'domain' => $domain,
-            'account' => $account,
-            'conn' => $conn,
-            'buttons' => $buttons,
-            'action' => $action,
-            'classError' => $classError,
-            'messageError' => $messageError,
-        ];
-
+    }else{        
         $controller = $method.'Controller';
 
         ob_start();
-        $controller::$action($data);
+        $controller::$action($array);
         $contenu = ob_get_clean();
     }
 
     require './views/layout.php';
-
-    // On met à jour les variables de SESSION
-    $_SESSION['needToConnect'] = $needToConnect;
-    $_SESSION['account'] = $account;
 ?>

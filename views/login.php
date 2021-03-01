@@ -22,11 +22,7 @@
 
                 <div class="form-row pb-3">
                     <div class="offset-md-3 col-md-9">
-                        <button type="submit" class="btn btn-primary">Se connecter</button>
-                        <!-- <button type="submit" class="btn btn-primary" name="action" value="POST">Créer</button>
-                        <button type="submit" class="btn btn-info" name="action" value="GET">Voir</button>
-                        <button type="submit" class="btn btn-warning" name="action" value="PUT">Modifier</button>
-                        <button type="submit" class="btn btn-danger" name="action" value="DELETE">Supprimer</button> -->
+                        <button type="submit" class="btn btn-success">Se connecter</button>
                     </div>
                 </div>
             </form>

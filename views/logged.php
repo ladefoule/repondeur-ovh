@@ -13,10 +13,15 @@
             </div>
 
             <div class="form-row pb-3">
-                <div class="offset-md-3 col-md-9">
-                    <?php if(isset($_SESSION['responderAvailable'])){ ?>
+                <label for="account" class="col-md-3 col-form-label text-md-right">Mon répondeur</label>
+                <div class="col-md-9 d-flex align-items-center d-flex flex-wrap">
+                    <?php if($responder){ ?>
+                        <span class="col-12 alert alert-info">
+                            <!-- Vous avez un répondeur -->Valable du <?php echo $responder['fromFR'] ?> au <?php echo $responder['toFR'] ?>
+                        </span>
                         <a href="?action=show"><button class="btn btn-info" name="action"><?php echo $buttons['show']['button'] ?></button></a>
                     <?php }else{ ?>
+                        <span class="col-12 alert alert-info">Vous n'avez pas de répondeur actif.</span>
                         <a href="?action=create"><button class="btn btn-primary" name="action"><?php echo $buttons['create']['button'] ?></button></a>
                     <?php } ?>
                 </div>

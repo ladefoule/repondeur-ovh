@@ -42,7 +42,9 @@ class GETController
         $formMethod = 'GET';
         $buttons = $array['buttons'];
 
-        try {
+        $result = getApi($array);
+
+        if($result) {
             $result = $conn->get("/email/domain/$domain/responder/$account/");
             $copy = $result['copy'];
             $content = htmlentities($result['content']);
@@ -50,7 +52,7 @@ class GETController
             $from = $from->format('Y-m-d');
             $to = new Carbon($result['to']);
             $to = $to->format('Y-m-d');
-        } catch (RequestException $e) {
+        } else {
             $class = $classError;
             $message = $messageError;
         }
@@ -67,30 +69,22 @@ class GETController
      */
     public static function delete(array $array)
     {
-        $domain = $array['domain'];
-        $account = $array['account'];
-        $conn = $array['conn'];
-        $action = $array['action'];
-        $buttons = $array['buttons'];
-        $classError = $array['classError'];
-        $messageError = $array['messageError'];
-
-        try {  
-            $result = $conn->delete("/email/domain/$domain/responder/$account/");
+        $result = deleteApi($array);
+        if($result) {  
             $class = 'success';
             $message = "Répondeur supprimé avec succès !";
-            unset($_SESSION['responderAvailable']);
-        } catch (RequestException $e) {
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-            echo $responseBodyAsString;
-            
-            $class = $classError;
-            $message = $messageError;
-            $_SESSION['responderAvailable'] = true;
+        }else{            
+            $class = $array['classError'];
+            $message = $array['messageError'];
         }
-
         include('./views/notification.php');
+        
+        // Variables utilisées dans la view logged.php
+        $action = $array['action'];
+        $buttons = $array['buttons'];
+        $account = $array['account'];
+        $domain = $array['domain'];
+        $responder = getApi($array);
         include('./views/logged.php');
     }
     
@@ -104,13 +98,14 @@ class GETController
     public static function logout(array $array)
     {
         session_destroy();
-        $needToConnect = true;
-        $account = '';
-
+        
         $message = "Vous êtes déconnecté.";
         $class = "success";
-
         include('./views/notification.php');
+        
+        $account = '';
+        $account = $array['account'];
+        $domain = $array['domain'];
         include('./views/login.php');
     }
     
@@ -123,10 +118,12 @@ class GETController
      */
     public static function default(array $array)
     {
+        // Variables utilisées dans la view logged.php
+        $action = $array['action'];
         $buttons = $array['buttons'];
-        $domain = $array['domain'];
         $account = $array['account'];
-        $conn = $array['conn'];
+        $domain = $array['domain'];
+        $responder = getApi($array);
         include('./views/logged.php');
     }
 }

@@ -31,7 +31,6 @@
                     <input type="date" required <?php if($action == 'show') echo 'disabled'; ?> class="col-lg-9 form-control" id="to" name="to" value="<?php echo $to ?>">
                 </div>
 
-                <!-- <button type="submit" class="btn btn-<?php echo $buttons[$action]['class'] ?> px-4" name="action" value="<?php echo $action ?>"><?php echo $buttons[$action]['button'] ?></button> -->
                 <?php if($action == 'create'){ ?>
                     <button type="submit" class="offset-lg-3 btn btn-primary px-4" name="action" value="create">Créer</button>
                 <?php }else if($action == 'show'){ ?>
@@ -41,19 +40,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    var textarea = document.querySelector('textarea');
-
-    textarea.addEventListener('keydown', autosize);
-                
-    function autosize(){
-        var el = this;
-        setTimeout(function(){
-            el.style.cssText = 'height:auto; padding:0';
-            // for box-sizing other than "content-box" use:
-            // el.style.cssText = '-moz-box-sizing:content-box';
-            el.style.cssText = 'height:' + el.scrollHeight + 'px';
-        },0);
-    }
-</script>

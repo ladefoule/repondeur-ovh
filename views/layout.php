@@ -29,7 +29,7 @@
                             Votre répondeur
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <?php if(! isset($_SESSION['responderAvailable'])){ ?>
+                            <?php if(! $responder){ ?>
                                 <a class="dropdown-item" href="/?action=create">Créer</a>
                             <?php }else{ ?>
                                 <a class="dropdown-item" href="/?action=show">Visualiser</a>
