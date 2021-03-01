@@ -1,7 +1,7 @@
 <div class="col-lg-8 p-0">
     <div class="card">
         <div class="card-header p-3">
-            Gestion de votre répondeur
+            Connexion
         </div>
         <div class="card-body p-3">
             <form action="/" method="POST">

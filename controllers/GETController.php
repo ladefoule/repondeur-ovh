@@ -1,7 +1,6 @@
 <?php
 
 use Carbon\Carbon;
-use GuzzleHttp\Exception\RequestException;
 
 class GETController
 {
@@ -10,10 +9,11 @@ class GETController
      *
      * @param array $array
      *
-     * @return void
+     * @return array
      */
     public static function create(array $array)
     {
+        // Variables utilisées dans la view form.php
         $domain = $array['domain'];
         $account = $array['account'];
         $action = $array['action'];
@@ -22,6 +22,7 @@ class GETController
         $buttons = $array['buttons'];
         
         include('./views/form.php');
+        return $array;
     }
     
     /**
@@ -29,7 +30,7 @@ class GETController
      *
      * @param array $array
      *
-     * @return void
+     * @return array
      */
     public static function show(array $array)
     {
@@ -46,18 +47,25 @@ class GETController
 
         if($result) {
             $result = $conn->get("/email/domain/$domain/responder/$account/");
+
+            // Variables utilisées dans la view form.php
             $copy = $result['copy'];
             $content = htmlentities($result['content']);
             $from = new Carbon($result['from']);
             $from = $from->format('Y-m-d');
             $to = new Carbon($result['to']);
             $to = $to->format('Y-m-d');
+
+            include('./views/form.php');
         } else {
             $class = $classError;
             $message = $messageError;
+            include('./views/notification.php');
+
+            include('./views/logged.php');
         }
 
-        include('./views/form.php');
+        return $array;
     }
     
     /**
@@ -65,7 +73,7 @@ class GETController
      *
      * @param array $array
      *
-     * @return void
+     * @return array
      */
     public static function delete(array $array)
     {
@@ -86,6 +94,8 @@ class GETController
         $domain = $array['domain'];
         $responder = getApi($array);
         include('./views/logged.php');
+
+        return $array;
     }
     
     /**
@@ -93,7 +103,7 @@ class GETController
      *
      * @param array $array
      *
-     * @return void
+     * @return array
      */
     public static function logout(array $array)
     {
@@ -103,20 +113,23 @@ class GETController
         $class = "success";
         include('./views/notification.php');
         
+        // Variables utilisées dans la view login.php
         $account = '';
-        $account = $array['account'];
         $domain = $array['domain'];
         include('./views/login.php');
+        
+        $array['account'] = '';
+        return $array;
     }
     
     /**
-     * Method default
+     * Method index
      *
      * @param array $array
      *
-     * @return void
+     * @return array
      */
-    public static function default(array $array)
+    public static function index(array $array)
     {
         // Variables utilisées dans la view logged.php
         $action = $array['action'];
@@ -124,6 +137,12 @@ class GETController
         $account = $array['account'];
         $domain = $array['domain'];
         $responder = getApi($array);
-        include('./views/logged.php');
+
+        if($account)
+            include('./views/logged.php');
+        else
+            include('./views/login.php');
+
+        return $array;
     }
 }

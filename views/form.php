@@ -31,11 +31,13 @@
                     <input type="date" required <?php if($action == 'show') echo 'disabled'; ?> class="col-lg-9 form-control" id="to" name="to" value="<?php echo $to ?>">
                 </div>
 
-                <?php if($action == 'create'){ ?>
-                    <button type="submit" class="offset-lg-3 btn btn-primary px-4" name="action" value="create">Créer</button>
-                <?php }else if($action == 'show'){ ?>
-                    <button type="submit" class="offset-lg-3 btn btn-danger px-4" name="action" value="delete">Supprimer</button>
-                <?php } ?>
+                <div class="form-row pb-3">
+                    <?php if($action == 'create'){ ?>
+                        <button type="submit" class="offset-lg-3 btn btn-primary px-4" name="action" value="create">Créer</button>
+                    <?php }else if($action == 'show'){ ?>
+                        <button type="submit" class="offset-lg-3 btn btn-danger px-4" name="action" value="delete">Supprimer</button>
+                    <?php } ?>
+                </div>
             </form>
         </div>
     </div>

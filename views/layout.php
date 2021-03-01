@@ -1,14 +1,10 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="stylesheet" href="./css/style.css">
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="./css/style.css">
     <title>Gestion de votre répondeur</title>
   </head>
   <body class="full">
@@ -26,7 +22,7 @@
                     <?php if($account){ ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Votre répondeur
+                            Mon répondeur
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <?php if(! $responder){ ?>
@@ -62,6 +58,6 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script src="./vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

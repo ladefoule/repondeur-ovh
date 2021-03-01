@@ -1,7 +1,7 @@
 <div class="col-lg-8 p-0">
     <div class="card">
         <div class="card-header p-3">
-            Gestion de votre répondeur
+            Gestion de mon répondeur
         </div>
         <div class="card-body p-3">
             <div class="form-row pb-3">

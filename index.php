@@ -32,18 +32,18 @@
 
     $messageError = "Une erreur s'est produite, merci de rééssayer. ";
     $classError = 'danger';
-    
+
     $routes = [
-        'GET' => ['create', 'show', 'delete', 'logout', 'default'],
-        'POST' => ['create', 'default'],
-        // 'AUTH' => ['login', 'default'],
+        'GET' => ['create', 'show', 'delete', 'logout', 'index'],
+        'POST' => ['create', 'index'],
     ];
 
     $account = $_SESSION['account'] ?? '';
     $method = $_SERVER['REQUEST_METHOD'];
-    $action = $_GET['action'] ?? 'default';
+    $action = $_GET['action'] ?? 'index';
 
-    if(! in_array($action, $routes[$method])){
+    // Si la route n'existe pas ou si elle existe mais que l'utilisateur n'est pas connecté
+    if(! in_array($action, $routes[$method]) || (! $account && $action != 'index')){
         header("Location: /");
         exit;
     }
@@ -71,48 +71,18 @@
         'conn' => $conn,
         'buttons' => $buttons,
         'action' => $action,
+        'imapServer' => $imapServer,
         'classError' => $classError,
         'messageError' => $messageError,
     ];
     
-    // Si aucun membre n'est connecté
-    if(! $account){
-        if($method == 'GET'){
-            ob_start();
-            include('./views/login.php');
-            $contenu = ob_get_clean();
-        }else if($method == 'POST'){
-            $email = htmlentities($_POST['account']) .'@'. $domain;
-            $password = htmlentities($_POST['password']);
+    $controller = $method.'Controller';
 
-            if (! canLoginEmailAccount($imapServer, $email, $password)){        
-                $class = 'danger';
-                $message = "Impossible de vous connecter, veuillez rééssayer.";
-                
-                ob_start();
-                include('./views/notification.php');
-                include('./views/login.php');
-                $contenu = ob_get_clean();
-            }else{
-                // Variables utilisées dans la view logged.php
-                $account = htmlentities($_POST['account']);
-                $responder = getApi($array);
+    ob_start();
+    $array = $controller::$action($array);
+    $contenu = ob_get_clean();
 
-                $_SESSION['account'] = $account; // On active la SESSION
-                $array['account'] = $account; // On met à jour la variable $array
-
-                ob_start();
-                include('./views/logged.php');
-                $contenu = ob_get_clean();
-            }
-        }
-    }else{        
-        $controller = $method.'Controller';
-
-        ob_start();
-        $controller::$action($array);
-        $contenu = ob_get_clean();
-    }
-
+    $responder = getApi($array);
+    $account = $array['account'];
     require './views/layout.php';
 ?>
