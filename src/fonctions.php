@@ -1,5 +1,6 @@
 <?php 
 
+use Exception;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\RequestException;
 
@@ -36,7 +37,7 @@ function getApi($array)
     try {
         $result = $conn->get("/email/domain/$domain/responder/$account/");
         $result['copy'] = $result['copy'];
-        $result['content'] = htmlentities($result['content']);
+        $result['content'] = $result['content'];
         $from = new Carbon($result['from']);
         $result['from'] = $from->format('Y-m-d');
         $result['fromFR'] = $from->translatedFormat('d M Y');
@@ -56,7 +57,7 @@ function postApi($array)
     $conn = $array['conn'];
 
     $copy = isset($_POST['copy']) ? true : false;
-    $content = htmlentities($_POST['content']);
+    $content = htmlspecialchars($_POST['content']);
     $from = new Carbon($_POST['from']);
     $to = new Carbon($_POST['to']);
 

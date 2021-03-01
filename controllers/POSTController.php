@@ -17,11 +17,6 @@ class POSTController
         $classError = $array['classError'];
         $messageError = $array['messageError'];
 
-        // $copy = isset($_POST['copy']) ? true : false;
-        // $content = htmlentities($_POST['content']);
-        // $from = new Carbon($_POST['from']);
-        // $to = new Carbon($_POST['to']);
-
         $result = postApi($array);
 
         if($result) {      
@@ -31,8 +26,14 @@ class POSTController
             $class = $classError;
             $message = $messageError;
         }
-
         include('./views/notification.php');
+
+        // Variables utilisées dans la view logged.php
+        $action = $array['action'];
+        $buttons = $array['buttons'];
+        $account = $array['account'];
+        $domain = $array['domain'];
+        $responder = getApi($array);
         include('./views/logged.php');
     }
 }
