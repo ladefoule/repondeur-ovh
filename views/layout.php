@@ -5,12 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="stylesheet" href="./css/style.css">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
     <title>Gestion de votre répondeur</title>
   </head>
-  <body>
+  <body class="full">
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#"></a>
@@ -20,29 +21,27 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">Accueil</a>
+                        <a class="nav-link" href="/">Accueil</a>
                     </li>
                     <?php if($account){ ?>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Votre répondeur
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <?php if(! $responderAvailable){ ?>
+                            <?php if(! isset($_SESSION['responderAvailable'])){ ?>
                                 <a class="dropdown-item" href="/?action=create">Créer</a>
                             <?php }else{ ?>
                                 <a class="dropdown-item" href="/?action=show">Visualiser</a>
                             <?php } ?>
-                            <!-- <a class="dropdown-item" href="/?action=update">Modifier</a> -->
-                            <!-- <a class="dropdown-item" href="/?action=delete">Supprimer</a> -->
                         </div>
                     </li>
                     <?php } ?>
                 </ul>
                 <?php if($account){ ?>
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item nav-link-profil dropdown pl-2 d-flex flex-shrink-0">
-                        <span id="navbarDropdown" class="nav-link dropdown-toggle text-white" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    <li class="nav-item nav-link-profil dropdown">
+                        <span id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             <?php echo $account ?>
                         </span>
 
@@ -59,19 +58,6 @@
     </nav>
 
     <div class="container d-flex justify-content-center py-3 flex-wrap">
-        <?php
-            // Personnalisation du message
-            if(isset($message) && isset($class)){
-                ?>
-                <div class="col-12 d-flex justify-content-center">
-                    <div class="col-md-6 alert alert-<?php echo $class ?> alert-block">    
-                        <button type="button" class="close" data-dismiss="alert">×</button>    
-                        <strong><?php echo $message ?></strong>
-                    </div>
-                </div>
-                <?php 
-            }
-        ?>
         <?php echo $contenu; ?>
     </div>
 

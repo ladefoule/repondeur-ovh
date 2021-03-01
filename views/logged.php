@@ -14,7 +14,7 @@
 
             <div class="form-row pb-3">
                 <div class="offset-md-3 col-md-9">
-                    <?php if($responderAvailable){ ?>
+                    <?php if(isset($_SESSION['responderAvailable'])){ ?>
                         <a href="?action=show"><button class="btn btn-info" name="action"><?php echo $buttons['show']['button'] ?></button></a>
                     <?php }else{ ?>
                         <a href="?action=create"><button class="btn btn-primary" name="action"><?php echo $buttons['create']['button'] ?></button></a>

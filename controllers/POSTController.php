@@ -38,13 +38,14 @@ class POSTController
     
             $class = 'success';
             $message = "Répondeur créé avec succès !";
-            $responderAvailable = true;
+            $_SESSION['responderAvailable'] = true;
         } catch (RequestException $e) {                        
             $class = $classError;
             $message = $messageError;
+            unset($_SESSION['responderAvailable']);
         }
 
-        // header("Location : /");
+        include('./views/notification.php');
         include('./views/logged.php');
     }
 }

@@ -19,6 +19,7 @@ class GETController
         $action = $array['action'];
         $to = $from = $copy = $content = '';
         $formMethod = 'POST';
+        $buttons = $array['buttons'];
         
         include('./views/form.php');
     }
@@ -39,6 +40,7 @@ class GETController
         $classError = $array['classError'];
         $messageError = $array['messageError'];
         $formMethod = 'GET';
+        $buttons = $array['buttons'];
 
         try {
             $result = $conn->get("/email/domain/$domain/responder/$account/");
@@ -77,16 +79,18 @@ class GETController
             $result = $conn->delete("/email/domain/$domain/responder/$account/");
             $class = 'success';
             $message = "Répondeur supprimé avec succès !";
-            $responderAvailable = false;
+            unset($_SESSION['responderAvailable']);
         } catch (RequestException $e) {
-            // $response = $e->getResponse();
-            // $responseBodyAsString = $response->getBody()->getContents();
-            // echo $responseBodyAsString;
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            echo $responseBodyAsString;
             
             $class = $classError;
             $message = $messageError;
+            $_SESSION['responderAvailable'] = true;
         }
 
+        include('./views/notification.php');
         include('./views/logged.php');
     }
     
@@ -102,6 +106,11 @@ class GETController
         session_destroy();
         $needToConnect = true;
         $account = '';
+
+        $message = "Vous êtes déconnecté.";
+        $class = "success";
+
+        include('./views/notification.php');
         include('./views/login.php');
     }
     
@@ -118,7 +127,6 @@ class GETController
         $domain = $array['domain'];
         $account = $array['account'];
         $conn = $array['conn'];
-        $responderAvailable = $array['responderAvailable'];
         include('./views/logged.php');
     }
 }

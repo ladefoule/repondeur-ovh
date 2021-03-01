@@ -6,7 +6,7 @@
                 <div class="form-row pb-3 d-flex align-items-center">
                     <label for="account" class="col-lg-3 text-lg-right">Email <span class="text-danger">*</span></label>
                     <input type="text" required disabled class="form-control col-6 col-lg-5" id="account" value="<?php echo $account ?>"><span class="col-6 col-lg-4">@<?php echo $domain ?></span>
-                    <input type="hidden" name="account" value="<?php echo $account ?>">
+                    <!-- <input type="hidden" name="account" <?php //if($action == 'show') echo 'disabled'; ?> value="<?php //echo $account ?>"> -->
                 </div>
 
                 <div class="form-row pb-3">

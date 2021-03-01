@@ -30,7 +30,7 @@
         ]
     ];
 
-    $routes = ['create', 'show', 'delete'];
+    $routes = ['create', 'show', 'delete', 'logout'];
 
     $client = new Client([
         // 'http_errors' => false, // Todo : Essayer de trouver une solution pour récupérer le code erreur en utilisant la classe Api d'OVH
@@ -91,9 +91,9 @@
         // Si une erreur est générée alors on suppose que c'est non
         try {
             $conn->get("/email/domain/$domain/responder/$account/");
-            $responderAvailable = true;
+            $_SESSION['responderAvailable'] = true;
         } catch (RequestException $e) {
-            $responderAvailable = false;
+            unset($_SESSION['responderAvailable']);
         }
 
         // Les données utilisées dans les différentes méthodes des controllers
@@ -105,7 +105,6 @@
             'action' => $action,
             'classError' => $classError,
             'messageError' => $messageError,
-            'responderAvailable' => $responderAvailable,
         ];
 
         $controller = $method.'Controller';
