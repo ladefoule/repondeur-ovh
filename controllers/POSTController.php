@@ -16,12 +16,14 @@ class POSTController
 
         $result = postApi($array);
 
-        if($result) {      
+        if($result) {
             $class = 'success';
             $message = "Répondeur créé avec succès !";
         }else{                        
             $class = $classError;
             $message = $messageError;
+
+            // Todo : Sauvegarder les données en session et proposer de revenir en arrière
         }
         include('./views/notification.php');
 

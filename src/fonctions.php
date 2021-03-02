@@ -1,5 +1,5 @@
 <?php 
-
+session_start();
 use Exception;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\RequestException;
@@ -61,7 +61,7 @@ function postApi($array)
     $from = new Carbon($_POST['from']);
     $to = new Carbon($_POST['to']);
 
-    try {  
+    try {
         $conn->post("/email/domain/$domain/responder/", array(
             'account' => $account, // Account of domain (type: string)
             'content' => $content, // Content of responder (type: string)
@@ -70,8 +70,15 @@ function postApi($array)
             'to' => $to, // Date of end responder (type: datetime)
         ));
 
+        unset($_SESSION['form']); // On supprime les données du formulaire potentiellement sauvegardées dans la SESSION
         return true;
-    } catch (RequestException $e) {                        
+    } catch (RequestException $e) {
+        // On sauvegarde les données en SESSION au cas ou l'utilisateur revient sur le formulaire
+        $_SESSION['form']['copy'] = $copy;
+        $_SESSION['form']['from'] = $from->format('Y-m-d');
+        $_SESSION['form']['to'] = $to->format('Y-m-d');
+        $_SESSION['form']['content'] = $content;
+
         return false;
     }
 }

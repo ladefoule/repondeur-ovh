@@ -20,6 +20,14 @@ class GETController
         $to = $from = $copy = $content = '';
         $formMethod = 'POST';
         $buttons = $array['buttons'];
+
+        
+        if(isset($_SESSION['form'])){
+            $copy = $_SESSION['form']['copy'];
+            $from = $_SESSION['form']['from'];
+            $to = $_SESSION['form']['to'];
+            $content = $_SESSION['form']['content'];
+        }
         
         include('./views/form.php');
         return $array;

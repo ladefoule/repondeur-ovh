@@ -1,5 +1,4 @@
 <?php 
-
     session_start();
     use Ovh\Api;
     use GuzzleHttp\Client;
@@ -30,7 +29,7 @@
         ]
     ];
 
-    $messageError = "Une erreur s'est produite, merci de rééssayer. ";
+    $messageError = "Une erreur s'est produite, merci de rééssayer. <a class='ml-3 icon-left-outline' href='".$_SERVER['HTTP_REFERER']."'>retour</a>";
     $classError = 'danger';
 
     $routes = [
