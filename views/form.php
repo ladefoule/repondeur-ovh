@@ -1,6 +1,6 @@
 <div class="col-md-8 p-0">
     <div class="card">
-        <div class="card-header">Mon répondeur</div>
+        <div class="card-header"><span class="icon-mail"></span> Mon répondeur</div>
         <div class="card-body">
             <form method="<?php echo $formMethod ?>">
                 <div class="form-row pb-3 d-flex align-items-center">
@@ -10,17 +10,13 @@
 
                 <div class="form-row pb-3">
                     <label class="col-lg-3 col-form-label text-lg-right" for="content">Message <span class="text-danger">*</span></label>
-                    <?php if($action == 'create'){ ?>
-                        <textarea class="col-lg-9 form-control" required rows="8" id="content" name="content"><?php echo $content ?></textarea>
-                    <?php }else{ ?>
-                        <div class="col-lg-9 rounded border p-3 bg-light"><?php echo $content ?></div>
-                    <?php } ?>
+                    <textarea class="col-lg-9 form-control" required <?php if($action == 'show') echo 'disabled'; ?> rows="8" id="content" name="content"><?php echo $content ?></textarea>
                 </div>
                 
                 <div class="offset-lg-3 form-check pb-3 d-flex align-items-center">
                     <input class="form-check-input" type="checkbox" <?php if($action == 'show') echo 'disabled'; ?> <?php if($copy || $action == 'create') echo 'checked'; ?> id="copy" name="copy">
                     <label class="form-check-label" for="copy">
-                        Sauvegarder le mail reçu
+                        Sauvegarder les mails reçus
                     </label>
                 </div>
 
