@@ -17,7 +17,7 @@ class GETController
         $domain = $array['domain'];
         $account = $array['account'];
         $action = $array['action'];
-        $to = $from = $copy = $content = '';
+        $to = $from = $content = '';$copy = true;
         $formMethod = 'POST';
         $buttons = $array['buttons'];
 

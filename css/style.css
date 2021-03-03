@@ -14,14 +14,3 @@
     color:white !important;
     /* font-weight: bold; */
 }
-
-/* main{
-    margin-top:50px
-} */
-
-textarea {
-    resize: none;
-    overflow: hidden;
-    min-height: 50px;
-    max-height: 100px;
-}

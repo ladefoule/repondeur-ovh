@@ -14,7 +14,7 @@
                 </div>
                 
                 <div class="offset-lg-3 form-check pb-3 d-flex align-items-center">
-                    <input class="form-check-input" type="checkbox" <?php if($action == 'show') echo 'disabled'; ?> <?php if($copy || $action == 'create') echo 'checked'; ?> id="copy" name="copy">
+                    <input class="form-check-input" type="checkbox" <?php if($action == 'show') echo 'disabled'; ?> <?php if($copy) echo 'checked'; ?> id="copy" name="copy">
                     <label class="form-check-label" for="copy">
                         Sauvegarder les mails reçus
                     </label>
@@ -30,12 +30,14 @@
                     <input type="date" required <?php if($action == 'show') echo 'disabled'; ?> class="col-lg-9 form-control" id="to" name="to" value="<?php echo $to ?>">
                 </div>
 
-                <div class="form-row pb-3">
+                <div class="form-row pb-3 d-flex">
                     <?php if($action == 'create'){ ?>
                         <button type="submit" class="offset-lg-3 btn btn-primary px-4" name="action" value="create">Créer</button>
                     <?php }else if($action == 'show'){ ?>
                         <button type="submit" class="offset-lg-3 btn btn-danger px-4" name="action" value="delete">Supprimer</button>
                     <?php } ?>
+
+                    <a class="ml-auto btn btn-secondary" href="/"><span class="icon-home"></span>Accueil</a>
                 </div>
             </form>
         </div>
