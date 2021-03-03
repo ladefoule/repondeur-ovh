@@ -139,6 +139,9 @@ class GETController
      */
     public static function index(array $array)
     {
+        // On supprime les données du formulaire potentiellement sauvegardées dans la SESSION
+        unset($_SESSION['form']); 
+
         // Variables utilisées dans la view logged.php
         $action = $array['action'];
         $buttons = $array['buttons'];

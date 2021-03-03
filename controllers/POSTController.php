@@ -22,8 +22,6 @@ class POSTController
         }else{                        
             $class = $classError;
             $message = $messageError;
-
-            // Todo : Sauvegarder les données en session et proposer de revenir en arrière
         }
         include('./views/notification.php');
 

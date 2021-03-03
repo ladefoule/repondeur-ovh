@@ -70,7 +70,8 @@ function postApi($array)
             'to' => $to, // Date of end responder (type: datetime)
         ));
 
-        unset($_SESSION['form']); // On supprime les données du formulaire potentiellement sauvegardées dans la SESSION
+        // On supprime les données du formulaire potentiellement sauvegardées dans la SESSION
+        unset($_SESSION['form']); 
         return true;
     } catch (RequestException $e) {
         // On sauvegarde les données en SESSION au cas ou l'utilisateur revient sur le formulaire
