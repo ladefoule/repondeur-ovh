@@ -1,0 +1,16 @@
+# Protection de la lecture des repertoires
+<IfModule mod_autoindex.c>
+	Options -Indexes
+</IfModule>
+
+# Encodage des caractères
+AddDefaultCharset utf-8
+
+# Masquer les informations du serveur
+ServerSignature Off
+
+# Protege le fichier htaccess
+<files .htaccess>
+	order allow,deny
+	deny from all
+</files>

@@ -1,4 +1,4 @@
-<div class="col-md-8 p-0">
+<div class="col-lg-8 p-0">
     <div class="card">
         <div class="card-header"><span class="icon-mail"></span> Mon répondeur</div>
         <div class="card-body">
@@ -37,7 +37,7 @@
                         <button type="submit" class="offset-lg-3 btn btn-danger px-4" name="action" value="delete">Supprimer</button>
                     <?php } ?>
 
-                    <a class="ml-auto btn btn-secondary" href="/"><span class="icon-home"></span>Accueil</a>
+                    <!-- <a class="ml-auto btn btn-secondary" href="/"><span class="icon-home"></span>Accueil</a> -->
                 </div>
             </form>
         </div>
