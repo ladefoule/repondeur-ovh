@@ -28,8 +28,8 @@
     $classError = 'danger';
 
     $routes = [
-        'GET' => ['create', 'show', 'delete', 'logout', 'index', 'error404'],
-        'POST' => ['create', 'index'],
+        'GET' => ['index', 'create', 'show', 'delete', 'logout'],
+        'POST' => ['index', 'create'],
     ];
 
     $account = $_SESSION['account'] ?? '';
@@ -58,7 +58,7 @@
         $client
     );
 
-    // Les données utilisées dans les différentes méthodes des controllers
+    // Les données utilisées dans les différentes méthodes des models et controllers
     $array = [
         'domain' => $domain,
         'account' => $account,
