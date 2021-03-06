@@ -15,9 +15,6 @@ ServerSignature Off
 	deny from all
 </files>
 
-# Erreur 404
-ErrorDocument 404 /404.php
-
 # Réécriture des URLS 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d

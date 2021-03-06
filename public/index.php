@@ -3,14 +3,8 @@
     use Ovh\Api;
     use GuzzleHttp\Client;
     require __DIR__ . '/../vendor/autoload.php';
-    // spl_autoload_register(function ($className) {
-    //     include '/controllers/' . $className . '.php';
-    // });
 
     require_once('../config.php');
-    require_once('../src/fonctions.php');
-    require_once('../controllers/GETController.php');
-    require_once('../controllers/POSTController.php');
 
     $contenu = ''; // Layout content
 
@@ -29,7 +23,8 @@
         ]
     ];
 
-    $messageError = "Une erreur s'est produite, merci de rééssayer. <a class='ml-3 icon-left-outline' href='".$_SERVER['HTTP_REFERER']."'>retour</a>";
+    $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+    $messageError = "Une erreur s'est produite, merci de rééssayer. <a class='ml-3 icon-left-outline' href='$referer'>retour</a>";
     $classError = 'danger';
 
     $routes = [

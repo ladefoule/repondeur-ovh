@@ -10,5 +10,13 @@
             "php -r \"copy('vendor/twbs/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css');\"",
             "php -r \"copy('vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js', 'public/js/bootstrap.bundle.min.js');\""
         ]
+    },
+
+    "autoload": {
+        "files":[
+            "models/modele.php",
+            "controllers/GETController.php",
+            "controllers/POSTController.php"
+        ]
     }
 }

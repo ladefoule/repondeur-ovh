@@ -156,22 +156,4 @@ class GETController
 
         return $array;
     }
-
-    /**
-     * Method error404
-     *
-     * @param array $array
-     *
-     * @return array
-     */
-    public static function error404(array $array)
-    {
-        // Variables utilisées dans la view logged.php
-        $account = $array['account'];
-        $domain = $array['domain'];
-        $responder = getApi($array);
-
-        include('../views/404.php');
-        return $array;
-    }
 }
