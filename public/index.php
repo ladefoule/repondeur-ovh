@@ -2,15 +2,15 @@
     session_start();
     use Ovh\Api;
     use GuzzleHttp\Client;
-    require __DIR__ . '/vendor/autoload.php';
+    require __DIR__ . '/../vendor/autoload.php';
     // spl_autoload_register(function ($className) {
     //     include '/controllers/' . $className . '.php';
     // });
 
-    require_once('./config.php');
-    require_once('./src/fonctions.php');
-    require_once('./controllers/GETController.php');
-    require_once('./controllers/POSTController.php');
+    require_once('../config.php');
+    require_once('../src/fonctions.php');
+    require_once('../controllers/GETController.php');
+    require_once('../controllers/POSTController.php');
 
     $contenu = ''; // Layout content
 
@@ -33,7 +33,7 @@
     $classError = 'danger';
 
     $routes = [
-        'GET' => ['create', 'show', 'delete', 'logout', 'index'],
+        'GET' => ['create', 'show', 'delete', 'logout', 'index', 'error404'],
         'POST' => ['create', 'index'],
     ];
 
@@ -83,5 +83,5 @@
 
     $responder = getApi($array);
     $account = $array['account'];
-    require './views/layout.php';
+    require '../views/layout.php';
 ?>

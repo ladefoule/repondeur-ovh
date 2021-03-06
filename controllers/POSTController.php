@@ -23,7 +23,7 @@ class POSTController
             $class = $classError;
             $message = $messageError;
         }
-        include('./views/notification.php');
+        include('../views/notification.php');
 
         // Variables utilisées dans la view logged.php
         $action = $array['action'];
@@ -31,7 +31,7 @@ class POSTController
         $account = $array['account'];
         $domain = $array['domain'];
         $responder = getApi($array);
-        include('./views/logged.php');
+        include('../views/logged.php');
         return $array;
     }
     
@@ -53,10 +53,10 @@ class POSTController
         if (! canLoginEmailAccount($imapServer, $email, $password)){        
             $class = 'danger';
             $message = "Impossible de vous connecter, veuillez rééssayer.";
-            include('./views/notification.php');
+            include('../views/notification.php');
 
             $account = '';
-            include('./views/login.php');
+            include('../views/login.php');
         }else{
             // Variables utilisées dans la view logged.php
             $account = htmlspecialchars($_POST['account']);
@@ -65,7 +65,7 @@ class POSTController
             $array['account'] = $account; // On met à jour la variable $array
             
             $responder = getApi($array);
-            include('./views/logged.php');
+            include('../views/logged.php');
         }
 
         return $array;

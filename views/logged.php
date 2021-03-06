@@ -19,10 +19,10 @@
                         <span class="col-12 alert alert-info">
                             <!-- Vous avez un répondeur -->Valable du <?php echo $responder['fromFR'] ?> au <?php echo $responder['toFR'] ?>
                         </span>
-                        <a href="?action=show"><button class="btn btn-info" name="action"><?php echo $buttons['show']['button'] ?></button></a>
+                        <a href="/show"><button class="btn btn-info" name="action"><?php echo $buttons['show']['button'] ?></button></a>
                     <?php }else{ ?>
                         <span class="col-12 alert alert-info">Vous n'avez pas de répondeur actif.</span>
-                        <a href="?action=create"><button class="btn btn-primary" name="action"><?php echo $buttons['create']['button'] ?></button></a>
+                        <a href="/create"><button class="btn btn-primary" name="action"><?php echo $buttons['create']['button'] ?></button></a>
                     <?php } ?>
                 </div>
             </div>

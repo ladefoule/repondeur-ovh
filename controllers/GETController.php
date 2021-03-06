@@ -29,7 +29,7 @@ class GETController
             $content = $_SESSION['form']['content'];
         }
         
-        include('./views/form.php');
+        include('../views/form.php');
         return $array;
     }
     
@@ -64,13 +64,13 @@ class GETController
             $to = new Carbon($result['to']);
             $to = $to->format('Y-m-d');
 
-            include('./views/form.php');
+            include('../views/form.php');
         } else {
             $class = $classError;
             $message = $messageError;
-            include('./views/notification.php');
+            include('../views/notification.php');
 
-            include('./views/logged.php');
+            include('../views/logged.php');
         }
 
         return $array;
@@ -93,7 +93,7 @@ class GETController
             $class = $array['classError'];
             $message = $array['messageError'];
         }
-        include('./views/notification.php');
+        include('../views/notification.php');
         
         // Variables utilisées dans la view logged.php
         $action = $array['action'];
@@ -101,7 +101,7 @@ class GETController
         $account = $array['account'];
         $domain = $array['domain'];
         $responder = getApi($array);
-        include('./views/logged.php');
+        include('../views/logged.php');
 
         return $array;
     }
@@ -119,12 +119,12 @@ class GETController
         
         $message = "Vous êtes déconnecté.";
         $class = "success";
-        include('./views/notification.php');
+        include('../views/notification.php');
         
         // Variables utilisées dans la view login.php
         $account = '';
         $domain = $array['domain'];
-        include('./views/login.php');
+        include('../views/login.php');
         
         $array['account'] = '';
         return $array;
@@ -150,10 +150,28 @@ class GETController
         $responder = getApi($array);
 
         if($account)
-            include('./views/logged.php');
+            include('../views/logged.php');
         else
-            include('./views/login.php');
+            include('../views/login.php');
 
+        return $array;
+    }
+
+    /**
+     * Method error404
+     *
+     * @param array $array
+     *
+     * @return array
+     */
+    public static function error404(array $array)
+    {
+        // Variables utilisées dans la view logged.php
+        $account = $array['account'];
+        $domain = $array['domain'];
+        $responder = getApi($array);
+
+        include('../views/404.php');
         return $array;
     }
 }

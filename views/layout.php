@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="./vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/fontello/css/fontello.css?id=1">
-    <link rel="stylesheet" href="./css/style.css?id=1">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/fontello/css/fontello.css">
+    <link rel="stylesheet" href="./css/style.css">
     <title>Gestion de votre répondeur</title>
   </head>
   <body class="full">
@@ -27,9 +27,9 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <?php if(! $responder){ ?>
-                                <a class="dropdown-item" href="/?action=create">Créer</a>
+                                <a class="dropdown-item" href="/create">Créer</a>
                             <?php }else{ ?>
-                                <a class="dropdown-item" href="/?action=show">Visualiser</a>
+                                <a class="dropdown-item" href="/show">Visualiser</a>
                             <?php } ?>
                         </div>
                     </li>
@@ -43,7 +43,7 @@
                         </span>
 
                         <div class="dropdown-menu dropdown-menu-right mb-2" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/?action=logout">
+                            <a class="dropdown-item" href="/logout">
                                 Se déconnecter
                             </a>
                         </div>
@@ -59,6 +59,6 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="./vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
