@@ -17,10 +17,10 @@ class GETController
         $domain = $array['domain'];
         $account = $array['account'];
         $action = $array['action'];
-        $to = $from = $content = '';$copy = true;
+        $to = $from = $content = '';
+        $copy = true;
         $formMethod = 'POST';
         $buttons = $array['buttons'];
-
         
         if(isset($_SESSION['form'])){
             $copy = $_SESSION['form']['copy'];
@@ -44,30 +44,26 @@ class GETController
     {
         $domain = $array['domain'];
         $account = $array['account'];
-        $conn = $array['conn'];
+        $api = $array['api'];
         $action = $array['action'];
-        $classError = $array['classError'];
-        $messageError = $array['messageError'];
         $formMethod = 'GET';
         $buttons = $array['buttons'];
 
-        $result = getApi($array);
+        $responder = $api->get($array);
 
-        if($result) {
-            $result = $conn->get("/email/domain/$domain/responder/$account/");
-
+        if($responder) {
             // Variables utilisées dans la view form.php
-            $copy = $result['copy'];
-            $content = htmlentities($result['content']);
-            $from = new Carbon($result['from']);
+            $copy = $responder['copy'];
+            $content = htmlentities($responder['content']);
+            $from = new Carbon($responder['from']);
             $from = $from->format('Y-m-d');
-            $to = new Carbon($result['to']);
+            $to = new Carbon($responder['to']);
             $to = $to->format('Y-m-d');
 
             include('../views/form.php');
         } else {
-            $class = $classError;
-            $message = $messageError;
+            $class = $array['class_error'];
+            $message = $array['message_error'];
             include('../views/notification.php');
 
             include('../views/logged.php');
@@ -85,13 +81,14 @@ class GETController
      */
     public static function delete(array $array)
     {
-        $result = deleteApi($array);
+        $api = $array['api'];
+        $result = $api->delete($array);
         if($result) {  
             $class = 'success';
             $message = "Répondeur supprimé avec succès !";
         }else{            
-            $class = $array['classError'];
-            $message = $array['messageError'];
+            $class = $array['class_error'];
+            $message = $array['message_error'];
         }
         include('../views/notification.php');
         
@@ -100,7 +97,7 @@ class GETController
         $buttons = $array['buttons'];
         $account = $array['account'];
         $domain = $array['domain'];
-        $responder = getApi($array);
+        $responder = $api->get($array);
         include('../views/logged.php');
 
         return $array;
@@ -139,6 +136,8 @@ class GETController
      */
     public static function index(array $array)
     {
+        $api = $array['api'];
+
         // On supprime les données du formulaire potentiellement sauvegardées dans la SESSION
         unset($_SESSION['form']); 
 
@@ -147,11 +146,11 @@ class GETController
         $buttons = $array['buttons'];
         $account = $array['account'];
         $domain = $array['domain'];
-        $responder = getApi($array);
-
-        if($account)
+        
+        if($account){
+            $responder = $api->get($array);
             include('../views/logged.php');
-        else
+        }else
             include('../views/login.php');
 
         return $array;

@@ -11,17 +11,15 @@ class POSTController
      */
     public static function create(array $array)
     {
-        $classError = $array['classError'];
-        $messageError = $array['messageError'];
-
-        $result = postApi($array);
+        $api = $array['api'];
+        $result = $api->post($array);
 
         if($result) {
             $class = 'success';
             $message = "Répondeur créé avec succès !";
         }else{                        
-            $class = $classError;
-            $message = $messageError;
+            $class = $array['class_error'];
+            $message = $array['message_error'];
         }
         include('../views/notification.php');
 
@@ -30,7 +28,7 @@ class POSTController
         $buttons = $array['buttons'];
         $account = $array['account'];
         $domain = $array['domain'];
-        $responder = getApi($array);
+        $responder = $api->get($array);
         include('../views/logged.php');
         return $array;
     }
@@ -43,10 +41,11 @@ class POSTController
      */
     public static function index(array $array)
     {
+        $api = $array['api'];
         $domain = $array['domain'];
         $account = $array['account'];
         $buttons = $array['buttons'];
-        $imapServer = $array['imapServer'];
+        $imapServer = $array['imap_server'];
         $email = htmlspecialchars($_POST['account']) .'@'. $domain;
         $password = htmlspecialchars($_POST['password']);
 
@@ -64,7 +63,7 @@ class POSTController
             $_SESSION['account'] = $account; // On active la SESSION
             $array['account'] = $account; // On met à jour la variable $array
             
-            $responder = getApi($array);
+            $responder = $api->get($array);
             include('../views/logged.php');
         }
 

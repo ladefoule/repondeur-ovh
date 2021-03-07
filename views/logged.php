@@ -17,7 +17,7 @@
                 <div class="col-md-9 d-flex align-items-center d-flex flex-wrap">
                     <?php if($responder){ ?>
                         <span class="col-12 alert alert-info">
-                            <!-- Vous avez un répondeur -->Valable du <?php echo $responder['fromFR'] ?> au <?php echo $responder['toFR'] ?>
+                            <!-- Vous avez un répondeur -->Valable du <?php echo $responder['from_locale'] ?> au <?php echo $responder['to_locale'] ?>
                         </span>
                         <a href="/show"><button class="btn btn-info" name="action"><?php echo $buttons['show']['button'] ?></button></a>
                     <?php }else{ ?>

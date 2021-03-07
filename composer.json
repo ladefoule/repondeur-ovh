@@ -14,7 +14,9 @@
 
     "autoload": {
         "files":[
-            "models/modele.php",
+            "config.php",
+            "src/fonctions.php",
+            "models/ApiOvh.php",
             "controllers/GETController.php",
             "controllers/POSTController.php"
         ]
