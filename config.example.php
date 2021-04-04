@@ -27,3 +27,4 @@
 
     $messageError = "Une erreur s'est produite, merci de rééssayer.";
     $classError = 'danger';
+// test
