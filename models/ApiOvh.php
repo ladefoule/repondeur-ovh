@@ -1,5 +1,5 @@
 <?php 
-session_start();
+// session_start();
 use Ovh\Api;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -52,6 +52,7 @@ class ApiOvh
             $result['to_locale'] = $to->translatedFormat('d M Y');
             return $result;
         } catch (RequestException $e) {
+            error_log($e->getResponse()->getBody()->getContents());
             return false;
         }
     }
@@ -79,6 +80,8 @@ class ApiOvh
             unset($_SESSION['form']); 
             return true;
         } catch (RequestException $e) {
+            error_log($e->getResponse()->getBody()->getContents());
+
             // On sauvegarde les données en SESSION au cas ou l'utilisateur revient sur le formulaire
             $_SESSION['form']['copy'] = $copy;
             $_SESSION['form']['from'] = $from->format('Y-m-d');
@@ -98,6 +101,7 @@ class ApiOvh
             $this->api->delete("/email/domain/$domain/responder/$account/");
             return true;
         } catch (RequestException $e) {
+            error_log($e->getResponse()->getBody()->getContents());
             // $response = $e->getResponse();
             // $responseBodyAsString = $response->getBody()->getContents();
             // echo $responseBodyAsString;
