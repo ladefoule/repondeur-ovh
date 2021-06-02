@@ -2,18 +2,18 @@
 require '../config.php';
 
 if($singleSession)
-    setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time()+3600, '/', '.'.$domain);
+    setcookie($domain, $_COOKIE[$domain], time()+3600, '/', $domain, true, true);
 
+session_name($domain);
 session_start();
 
-// use ApiOvh;
 use Carbon\Carbon;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 Carbon::setLocale($lang);
 
-$contenu = ''; // Layout content
+$content = ''; // Layout content
 
 $routes = [
     'GET' => ['index', 'create', 'show', 'delete', 'logout'],
@@ -56,7 +56,7 @@ $controller = $method.'Controller';
 
 ob_start();
 $array = $controller::$action($array);
-$contenu = ob_get_clean();
+$content = ob_get_clean();
 
 $responder = $api->get($array);
 $account = $array['account'];
