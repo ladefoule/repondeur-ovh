@@ -1,13 +1,16 @@
 <?php 
 require '../config.php';
 
-$cookieName = str_replace(['.', '-'], '_', $domain);
-
-if($singleSession)
-    setcookie($cookieName, $_COOKIE[$cookieName], time()+3600, '/', $domain, false, true);
-
 session_name($cookieName);
 session_start();
+
+// On calcule la durée de la session en fonction du choix de l'utilisateur à la connexion (1 jour par défaut ou 1 an s'il veut garder la session active)
+if(isset($_SESSION['remember']) && $_SESSION['remember'])
+    $expires = time()+60*60*24*365;
+else
+    $expires = time()+60*60;
+
+setcookie($cookieName, $_COOKIE[$cookieName] ?? '', $expires, '/', $singleSession ? $domain : '', false, true);
 
 use Carbon\Carbon;
 
@@ -43,12 +46,14 @@ $api = new ApiOvh([
 ]);
 
 // Les données utilisées dans les différentes méthodes des models et controllers
-$array = [
+$global = [
     'domain' => $domain,
     'account' => $account,
     'api' => $api,
     'buttons' => $buttons,
     'action' => $action,
+    'cookie_name' => $cookieName,
+    'single_session' => $singleSession,
     'imap_server' => $imapServer,
     'class_error' => $classError,
     'message_error' => $messageError,
@@ -57,9 +62,9 @@ $array = [
 $controller = $method.'Controller';
 
 ob_start();
-$array = $controller::$action($array);
+$global = $controller::$action($global);
 $content = ob_get_clean();
 
-$responder = $api->get($array);
-$account = $array['account'];
+$responder = $api->get($global);
+$account = $global['account'];
 require '../views/layout.php';

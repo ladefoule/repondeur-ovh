@@ -5,49 +5,53 @@ class POSTController
     /**
      * Method create
      *
-     * @param array $array
+     * @param array $global
      *
      * @return array
      */
-    public static function create(array $array)
+    public static function create(array $global)
     {
-        $api = $array['api'];
-        $result = $api->post($array);
+        $api = $global['api'];
+        $result = $api->post($global);
 
         if($result) {
             $class = 'success';
             $message = "Répondeur créé avec succès !";
         }else{                        
-            $class = $array['class_error'];
-            $message = $array['message_error'];
+            $class = $global['class_error'];
+            $message = $global['message_error'];
         }
         include('../views/notification.php');
 
         // Variables utilisées dans la view logged.php
-        $action = $array['action'];
-        $buttons = $array['buttons'];
-        $account = $array['account'];
-        $domain = $array['domain'];
-        $responder = $api->get($array);
+        $action = $global['action'];
+        $buttons = $global['buttons'];
+        $account = $global['account'];
+        $domain = $global['domain'];
+        $responder = $api->get($global);
         include('../views/logged.php');
-        return $array;
+        return $global;
     }
     
     /**
      * index
      *
-     * @param  mixed $array
+     * @param  mixed $global
      * @return void
      */
-    public static function index(array $array)
+    public static function index(array $global)
     {
-        $api = $array['api'];
-        $domain = $array['domain'];
-        $account = $array['account'];
-        $buttons = $array['buttons'];
-        $imapServer = $array['imap_server'];
+        $api = $global['api'];
+        $domain = $global['domain'];
+        $account = $global['account'];
+        $buttons = $global['buttons'];
+        $imapServer = $global['imap_server'];
+        $cookieName = $global['cookie_name'];
+        $singleSession = $global['single_session'];
+
         $email = htmlspecialchars($_POST['account']) .'@'. $domain;
         $password = htmlspecialchars($_POST['password']);
+        $remember = isset($_POST['remember']) ? true : false;
 
         if (! canLoginEmailAccount($imapServer, $email, $password)){        
             $class = 'danger';
@@ -61,12 +65,16 @@ class POSTController
             $account = htmlspecialchars($_POST['account']);
             
             $_SESSION['account'] = $account; // On active la SESSION
-            $array['account'] = $account; // On met à jour la variable $array
+            $global['account'] = $account; // On met à jour la variable $global
+            $_SESSION['remember'] = $remember;
+
+            if($remember)
+                setcookie($cookieName, $_COOKIE[$cookieName], time() + 60*60*24*365, '/', $singleSession ? $domain : '', false, true);
             
-            $responder = $api->get($array);
+            $responder = $api->get($global);
             include('../views/logged.php');
         }
 
-        return $array;
+        return $global;
     }
 }

@@ -9,7 +9,7 @@ class ApiOvh
 {
     private $api;
 
-    public function __construct($array)
+    public function __construct($global)
     {
         $client = new Client([
             // 'http_errors' => false, // Todo : Essayer de trouver une solution pour récupérer le code erreur en utilisant la classe Api d'OVH
@@ -20,20 +20,20 @@ class ApiOvh
         ]);
     
         // Initiation de la connexion à l'API OVH
-        $api = new Api($array['application_key'],
-            $array['application_secret'],
-            $array['endpoint'],
-            $array['consumer_key'],
+        $api = new Api($global['application_key'],
+            $global['application_secret'],
+            $global['endpoint'],
+            $global['consumer_key'],
             $client
         );
         
         $this->api = $api;
     } 
 
-    public function get($array)
+    public function get($global)
     {
-        $domain = $array['domain'];
-        $account = $array['account'];
+        $domain = $global['domain'];
+        $account = $global['account'];
 
         if(! $account)
             return false;
@@ -57,10 +57,10 @@ class ApiOvh
         }
     }
 
-    public function post($array)
+    public function post($global)
     {
-        $domain = $array['domain'];
-        $account = $array['account'];
+        $domain = $global['domain'];
+        $account = $global['account'];
 
         $copy = isset($_POST['copy']) ? true : false;
         $content = htmlspecialchars($_POST['content']);
@@ -92,10 +92,10 @@ class ApiOvh
         }
     }
 
-    public function delete($array)
+    public function delete($global)
     {
-        $domain = $array['domain'];
-        $account = $array['account'];
+        $domain = $global['domain'];
+        $account = $global['account'];
 
         try {  
             $this->api->delete("/email/domain/$domain/responder/$account/");
