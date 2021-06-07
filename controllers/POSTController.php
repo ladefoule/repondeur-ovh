@@ -66,10 +66,20 @@ class POSTController
             
             $_SESSION['account'] = $account; // On active la SESSION
             $global['account'] = $account; // On met à jour la variable $global
-            $_SESSION['remember'] = $remember;
-
+            
             if($remember)
-                setcookie($cookieName, $_COOKIE[$cookieName], time() + 60*60*24*365, '/', $singleSession ? $domain : '', false, true);
+                $expires = time()+60*60*24*365; // 1 an
+            else
+                $expires = time()+60*60; // 1 heure
+
+            $cookieDomain = $singleSession ? $domain : '';
+            $cookie = [
+                'expires' => $expires,
+                'domain' => $cookieDomain,
+                'account' => $account,
+            ];
+
+            setcookie($cookieName, serialize($cookie), $expires, '/', $cookieDomain, false, true);
             
             $responder = $api->get($global);
             include('../views/logged.php');

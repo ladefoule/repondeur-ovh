@@ -112,7 +112,19 @@ class GETController
      */
     public static function logout(array $global)
     {
+        $cookieName = $global['cookie_name'];
+        $domain = $global['domain'];
+        $singleSession = $global['single_session'];
+
+        // Suppression de la session
         session_destroy();
+
+        // Suppression du cookie
+        if(isset($_COOKIE[$cookieName])){
+            unset($_COOKIE[$cookieName]);
+            setcookie($cookieName, null, time() - 3600, '/', $singleSession ? $domain : '');
+        }
+        
         
         $message = "Vous êtes déconnecté.";
         $class = "success";
