@@ -25,7 +25,6 @@ class POSTController
 
         // Variables utilisées dans la view logged.php
         $action = $global['action'];
-        $buttons = $global['buttons'];
         $account = $global['account'];
         $domain = $global['domain'];
         $responder = $api->get($global);
@@ -33,6 +32,36 @@ class POSTController
         return $global;
     }
     
+    /**
+     * Method update
+     *
+     * @param array $global
+     *
+     * @return array
+     */
+    public static function update(array $global)
+    {
+        $api = $global['api'];
+        $result = $api->put($global);
+
+        if($result) {
+            $class = 'success';
+            $message = "Répondeur modifié avec succès !";
+        }else{                        
+            $class = $global['class_error'];
+            $message = $global['message_error'];
+        }
+        include('../views/notification.php');
+
+        // Variables utilisées dans la view logged.php
+        $action = $global['action'];
+        $account = $global['account'];
+        $domain = $global['domain'];
+        $responder = $api->get($global);
+        include('../views/logged.php');
+        return $global;
+    }
+
     /**
      * index
      *
@@ -44,7 +73,6 @@ class POSTController
         $api = $global['api'];
         $domain = $global['domain'];
         $account = $global['account'];
-        $buttons = $global['buttons'];
         $imapServer = $global['imap_server'];
         $cookieName = $global['cookie_name'];
         $singleSession = $global['single_session'];

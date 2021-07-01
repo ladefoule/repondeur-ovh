@@ -91,6 +91,37 @@ class ApiOvh
             return false;
         }
     }
+    
+    public function put($global)
+    {
+        $domain = $global['domain'];
+        $account = $global['account'];
+
+        $content = htmlspecialchars($_POST['content']);
+        $from = new Carbon($_POST['from']);
+        $to = new Carbon($_POST['to']);
+
+        try {
+            $this->api->put("/email/domain/$domain/responder/$account", array(
+                'content' => $content,
+                'from' => $from,
+                'to' => $to,
+            ));
+
+            // On supprime les données du formulaire potentiellement sauvegardées dans la SESSION
+            unset($_SESSION['form']); 
+            return true;
+        } catch (RequestException $e) {
+            error_log($e->getResponse()->getBody()->getContents());
+
+            // On sauvegarde les données en SESSION au cas ou l'utilisateur revient sur le formulaire
+            $_SESSION['form']['from'] = $from->format('Y-m-d');
+            $_SESSION['form']['to'] = $to->format('Y-m-d');
+            $_SESSION['form']['content'] = $content;
+
+            return false;
+        }
+    }
 
     public function delete($global)
     {
@@ -101,11 +132,7 @@ class ApiOvh
             $this->api->delete("/email/domain/$domain/responder/$account/");
             return true;
         } catch (RequestException $e) {
-            error_log($e->getResponse()->getBody()->getContents());
-            // $response = $e->getResponse();
-            // $responseBodyAsString = $response->getBody()->getContents();
-            // echo $responseBodyAsString;
-            
+            error_log($e->getResponse()->getBody()->getContents());            
             return false;
         }
     }

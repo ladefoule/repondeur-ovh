@@ -18,8 +18,8 @@ Carbon::setLocale($lang);
 $content = ''; // Layout content
 
 $routes = [
-    'GET' => ['index', 'create', 'show', 'delete', 'logout'],
-    'POST' => ['index', 'create'],
+    'GET' => ['index', 'create', 'show', 'update', 'delete', 'logout'],
+    'POST' => ['index', 'create', 'update'],
 ];
 
 $referer = $_SERVER['HTTP_REFERER'] ?? '/';

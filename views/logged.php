@@ -19,10 +19,11 @@
                         <span class="col-12 alert alert-info">
                             <!-- Vous avez un répondeur -->Valable du <?php echo $responder['from_locale'] ?> au <?php echo $responder['to_locale'] ?>
                         </span>
-                        <a href="/show"><button class="btn-sm btn-info" name="action"><?php echo $buttons['show']['button'] ?></button></a>
+                        <a href="/show"><button class="btn-sm btn-info">Visualiser</button></a>
+                        <a href="/update"><button class="ml-3 btn-sm btn-warning">Modifier</button></a>
                     <?php }else{ ?>
                         <span class="col-12 alert alert-info">Vous n'avez pas de répondeur actif.</span>
-                        <a href="/create"><button class="btn-sm btn-primary" name="action"><?php echo $buttons['create']['button'] ?></button></a>
+                        <a href="/create"><button class="btn-sm btn-primary">Créer</button></a>
                     <?php } ?>
                 </div>
             </div>

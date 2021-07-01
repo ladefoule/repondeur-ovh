@@ -30,6 +30,7 @@
                                 <a class="dropdown-item" href="/create">Créer</a>
                             <?php }else{ ?>
                                 <a class="dropdown-item" href="/show">Visualiser</a>
+                                <a class="dropdown-item" href="/update">Modifier</a>
                             <?php } ?>
                         </div>
                     </li>

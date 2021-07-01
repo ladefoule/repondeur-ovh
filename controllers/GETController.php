@@ -20,7 +20,6 @@ class GETController
         $to = $from = $content = '';
         $copy = true;
         $formMethod = 'POST';
-        $buttons = $global['buttons'];
         
         if(isset($_SESSION['form'])){
             $copy = $_SESSION['form']['copy'];
@@ -46,8 +45,6 @@ class GETController
         $account = $global['account'];
         $api = $global['api'];
         $action = $global['action'];
-        $formMethod = 'GET';
-        $buttons = $global['buttons'];
 
         $responder = $api->get($global);
 
@@ -59,6 +56,49 @@ class GETController
             $from = $from->format('Y-m-d');
             $to = new Carbon($responder['to']);
             $to = $to->format('Y-m-d');
+
+            include('../views/form.php');
+        } else {
+            $class = $global['class_error'];
+            $message = $global['message_error'];
+            include('../views/notification.php');
+
+            include('../views/logged.php');
+        }
+
+        return $global;
+    }
+
+    /**
+     * Method update
+     *
+     * @param array $global
+     *
+     * @return array
+     */
+    public static function update(array $global)
+    {
+        $domain = $global['domain'];
+        $account = $global['account'];
+        $api = $global['api'];
+        $action = $global['action'];
+        $formMethod = 'POST';
+
+        $responder = $api->get($global);
+
+        if($responder) {
+            // Variables utilisées dans la view form.php
+            $content = htmlentities($responder['content']);
+            $from = new Carbon($responder['from']);
+            $from = $from->format('Y-m-d');
+            $to = new Carbon($responder['to']);
+            $to = $to->format('Y-m-d');
+
+            if(isset($_SESSION['form'])){
+                $from = $_SESSION['form']['from'];
+                $to = $_SESSION['form']['to'];
+                $content = $_SESSION['form']['content'];
+            }
 
             include('../views/form.php');
         } else {
@@ -94,7 +134,6 @@ class GETController
         
         // Variables utilisées dans la view logged.php
         $action = $global['action'];
-        $buttons = $global['buttons'];
         $account = $global['account'];
         $domain = $global['domain'];
         $responder = $api->get($global);
@@ -155,7 +194,6 @@ class GETController
 
         // Variables utilisées dans la view logged.php
         $action = $global['action'];
-        $buttons = $global['buttons'];
         $account = $global['account'];
         $domain = $global['domain'];
         
